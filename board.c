@@ -94,3 +94,71 @@ void board_print(struct board* board) {
 		printf("\n");
 	}
 }
+
+void board_shift_up(struct board* board) {
+	int i;
+	int j;
+	unsigned k;
+
+	// Shift tiles up the columns.
+	for (i = 0; i < BOARD_COLUMNS; i++) {
+		// Shift tiles up the column.
+		for (j = k = 0; j < BOARD_ROWS; j++) {
+			if (board->tiles[j][i]) {
+				board->tiles[k++][i] = board->tiles[j][i];
+				board->tiles[j][i] = 0;
+			}
+		}
+	}
+}
+
+void board_shift_down(struct board* board) {
+	int i;
+	int j;
+	unsigned k;
+
+	// Shift tiles down the columns.
+	for (i = 0; i < BOARD_COLUMNS; i++) {
+		// Shift tiles down the column.
+		for (j = k = BOARD_ROWS - 1; j >= 0; j--) {
+			if (board->tiles[j][i]) {
+				board->tiles[k--][i] = board->tiles[j][i];
+				board->tiles[j][i] = 0;
+			}
+		}
+	}
+}
+
+void board_shift_left(struct board* board) {
+	int i;
+	int j;
+	unsigned k;
+
+	// Shift tiles left across the rows.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		// Shift tiles left across the row.
+		for (j = k = 0; j < BOARD_COLUMNS; j++) {
+			if (board->tiles[i][j]) {
+				board->tiles[i][k++] = board->tiles[i][j];
+				board->tiles[i][j] = 0;
+			}
+		}
+	}
+}
+
+void board_shift_right(struct board* board) {
+	int i;
+	int j;
+	unsigned k;
+
+	// Shift tiles right across the rows.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		// Shift tiles right across the row.
+		for (j = k = BOARD_COLUMNS - 1; j >= 0; j--) {
+			if (board->tiles[i][j]) {
+				board->tiles[i][k--] = board->tiles[i][j];
+				board->tiles[i][j] = 0;
+			}
+		}
+	}
+}

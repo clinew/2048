@@ -64,5 +64,25 @@ void board_plop(struct board* board);
  */
 void board_print(struct board* board);
 
+/**
+ * Shift all the elements in the board down.
+ */
+void board_shift_down(struct board* board);
+
+/**
+ * Shift all the elements in the board left.
+ */
+void board_shift_left(struct board* board);
+
+/**
+ * Shift all the elements in the board right.
+ */
+void board_shift_right(struct board* board);
+
+/**
+ * Shift all the elements in the board up.
+ */
+void board_shift_up(struct board* board);
+
 
 #endif // board_H

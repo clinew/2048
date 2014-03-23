@@ -31,4 +31,12 @@ int main(int argc, char* argv[]) {
 	
 	// Print the final board.
 	board_print(&board);
+	board_shift_up(&board);
+	board_print(&board);
+	board_shift_down(&board);
+	board_print(&board);
+	board_shift_left(&board);
+	board_print(&board);
+	board_shift_right(&board);
+	board_print(&board);
 }
