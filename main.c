@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
 	struct board board;
 	char input[1024];
 	int status; // Game status.
+	int valid;
 
 	// Set up board.
 	board_init(&board);
@@ -35,6 +36,7 @@ int main(int argc, char* argv[]) {
 		board_print(&board);
 
 		// Get the player's move.
+		valid = 0;
 		memset((void*)input, 0, sizeof(input));
 		write(STDOUT_FILENO, (void*)"> ", 3);
 		if (read(STDIN_FILENO, (void*)input, sizeof(input) - 1)
@@ -44,20 +46,24 @@ int main(int argc, char* argv[]) {
 		}
 		input[strlen(input) - 1] = 0;
 		if (!strcmp(input, "u") || !strcmp(input, "up")) {
-			board_shift_up(&board);
+			valid = board_shift_up(&board);
 		} else if (!strcmp(input, "d") || !strcmp(input, "down")) {
-			board_shift_down(&board);
+			valid = board_shift_down(&board);
 		} else if (!strcmp(input, "l") || !strcmp(input, "left")) {
-			board_shift_left(&board);
+			valid = board_shift_left(&board);
 		} else if (!strcmp(input, "r") || !strcmp(input, "right")) {
-			board_shift_right(&board);
+			valid = board_shift_right(&board);
 		} else {
 			printf("Don't understand input: %s.\n", input);
 			continue;
 		}
 
-		// Add a tile to the board.
-		board_plop(&board);
+		// Prepare for user's next move.
+		if (valid) {
+			board_plop(&board);
+		} else {
+			printf("Invalid move.\n");
+		}
 	}
 	
 	// Print the final board.

@@ -97,12 +97,14 @@ void board_print(struct board* board) {
 	}
 }
 
-void board_shift_up(struct board* board) {
+int board_shift_up(struct board* board) {
 	int i;
 	int j;
 	unsigned k;
+	int valid;
 
 	// Shift tiles up the columns.
+	valid = 0;
 	for (i = 0; i < BOARD_COLUMNS; i++) {
 		// Find first free tile in the column.
 		k = 0;
@@ -115,17 +117,23 @@ void board_shift_up(struct board* board) {
 			if (board->tiles[j][i]) {
 				board->tiles[k++][i] = board->tiles[j][i];
 				board->tiles[j][i] = 0;
+				valid = 1;
 			}
 		}
 	}
+
+	// Return move status.
+	return valid;
 }
 
-void board_shift_down(struct board* board) {
+int board_shift_down(struct board* board) {
 	int i;
 	int j;
 	unsigned k;
+	int valid;
 
 	// Shift tiles down the columns.
+	valid = 0;
 	for (i = 0; i < BOARD_COLUMNS; i++) {
 		// Find the last free tile in the column.
 		k = BOARD_ROWS - 1;
@@ -138,17 +146,23 @@ void board_shift_down(struct board* board) {
 			if (board->tiles[j][i]) {
 				board->tiles[k--][i] = board->tiles[j][i];
 				board->tiles[j][i] = 0;
+				valid = 1;
 			}
 		}
 	}
+
+	// Return move status.
+	return valid;
 }
 
-void board_shift_left(struct board* board) {
+int board_shift_left(struct board* board) {
 	int i;
 	int j;
 	unsigned k;
+	int valid;
 
 	// Shift tiles left across the rows.
+	valid = 0;
 	for (i = 0; i < BOARD_ROWS; i++) {
 		// Find the first free tile in the row.
 		k = 0;
@@ -161,17 +175,23 @@ void board_shift_left(struct board* board) {
 			if (board->tiles[i][j]) {
 				board->tiles[i][k++] = board->tiles[i][j];
 				board->tiles[i][j] = 0;
+				valid = 1;
 			}
 		}
 	}
+
+	// Return move status.
+	return valid;
 }
 
-void board_shift_right(struct board* board) {
+int board_shift_right(struct board* board) {
 	int i;
 	int j;
 	unsigned k;
+	int valid;
 
 	// Shift tiles right across the rows.
+	valid = 0;
 	for (i = 0; i < BOARD_ROWS; i++) {
 		// Find the last free tile in the row.
 		k = BOARD_COLUMNS - 1;
@@ -184,7 +204,11 @@ void board_shift_right(struct board* board) {
 			if (board->tiles[i][j]) {
 				board->tiles[i][k--] = board->tiles[i][j];
 				board->tiles[i][j] = 0;
+				valid = 1;
 			}
 		}
 	}
+
+	// Return move status.
+	return valid;
 }
