@@ -51,7 +51,8 @@ void board_init(struct board* board) {
 		}
 	}
 
-	// Add a tile to the board.
+	// Add two tiles to the board.
+	board_plop(board);
 	board_plop(board);
 }
 
@@ -72,7 +73,8 @@ void board_plop(struct board* board) {
 	for (i = 0; i < BOARD_ROWS; i++) {
 		for (j = 0; j < BOARD_COLUMNS; j++) {
 			if (target == tiles_empty && board->tiles[i][j] == 0) {
-				board->tiles[i][j] = 2;
+				board->tiles[i][j] = (random() % 100 <=
+						BOARD_4SPAWN_CHANCE) ? 4 : 2;
 				tiles_empty++;
 			} else if (board->tiles[i][j] == 0) {
 				tiles_empty++;

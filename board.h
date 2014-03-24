@@ -25,6 +25,10 @@
 #define BOARD_COLUMNS 4
 #define BOARD_ROWS 4
 
+// Likelihood of a '4' appearing on the board represented as a percentage
+// multiplied by 100.
+#define BOARD_4SPAWN_CHANCE 15
+
 
 /**
  * Represents the in-game board.
