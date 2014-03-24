@@ -19,8 +19,43 @@
 
 
 int board_done(struct board* board) {
-	// TODO.
-	return 0;
+	int i;
+	int j;
+	int k;
+
+	// Check for zeroes or winning number.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		for (j = 0; j < BOARD_COLUMNS; j++) {
+			if (!board->tiles[i][j]) {
+				return 0;
+			} else if (board->tiles[i][j] == 2048) {
+				return 1;
+			}
+		}
+	}
+
+	// Check for possible horizontal merge.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		j = -1;
+		while ((k = ++j + 1) < BOARD_COLUMNS) {
+			if (board->tiles[i][j] == board->tiles[i][k]) {
+				return 0;
+			}
+		}
+	}
+
+	// Check for possible verical merge.
+	for (i = 0; i < BOARD_COLUMNS; i++) {
+		j = -1;
+		while ((k = ++j + 1) < BOARD_ROWS) {
+			if (board->tiles[j][i] == board->tiles[k][i]) {
+				return 0;
+			}
+		}
+	}
+	
+	// No possible merges.
+	return -1;
 }
 
 unsigned board_get_tiles_empty(struct board* board) {

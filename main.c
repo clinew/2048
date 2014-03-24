@@ -67,5 +67,12 @@ int main(int argc, char* argv[]) {
 	}
 	
 	// Print the final board.
+	printf("Game over, you ");
+	if (status < 0) {
+		printf("LOSE");
+	} else {
+		printf("WIN");
+	}
+	printf("!\n");
 	board_print(&board);
 }
