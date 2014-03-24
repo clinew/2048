@@ -74,7 +74,7 @@ void board_plop(struct board* board) {
 			if (target == tiles_empty && board->tiles[i][j] == 0) {
 				board->tiles[i][j] = 2;
 				tiles_empty++;
-			} else {
+			} else if (board->tiles[i][j] == 0) {
 				tiles_empty++;
 			}
 		}
@@ -102,8 +102,14 @@ void board_shift_up(struct board* board) {
 
 	// Shift tiles up the columns.
 	for (i = 0; i < BOARD_COLUMNS; i++) {
+		// Find first free tile in the column.
+		k = 0;
+		while (k < BOARD_ROWS && board->tiles[k][i]) {
+			k++;
+		}
+
 		// Shift tiles up the column.
-		for (j = k = 0; j < BOARD_ROWS; j++) {
+		for (j = k + 1; j < BOARD_ROWS; j++) {
 			if (board->tiles[j][i]) {
 				board->tiles[k++][i] = board->tiles[j][i];
 				board->tiles[j][i] = 0;
@@ -119,8 +125,14 @@ void board_shift_down(struct board* board) {
 
 	// Shift tiles down the columns.
 	for (i = 0; i < BOARD_COLUMNS; i++) {
+		// Find the last free tile in the column.
+		k = BOARD_ROWS - 1;
+		while (k >= 0 && board->tiles[k][i]) {
+			k--;
+		}
+		
 		// Shift tiles down the column.
-		for (j = k = BOARD_ROWS - 1; j >= 0; j--) {
+		for (j = k - 1; j >= 0; j--) {
 			if (board->tiles[j][i]) {
 				board->tiles[k--][i] = board->tiles[j][i];
 				board->tiles[j][i] = 0;
@@ -136,8 +148,14 @@ void board_shift_left(struct board* board) {
 
 	// Shift tiles left across the rows.
 	for (i = 0; i < BOARD_ROWS; i++) {
+		// Find the first free tile in the row.
+		k = 0;
+		while (k < BOARD_COLUMNS && board->tiles[i][k]) {
+			k++;
+		}
+
 		// Shift tiles left across the row.
-		for (j = k = 0; j < BOARD_COLUMNS; j++) {
+		for (j = k + 1; j < BOARD_COLUMNS; j++) {
 			if (board->tiles[i][j]) {
 				board->tiles[i][k++] = board->tiles[i][j];
 				board->tiles[i][j] = 0;
@@ -153,8 +171,14 @@ void board_shift_right(struct board* board) {
 
 	// Shift tiles right across the rows.
 	for (i = 0; i < BOARD_ROWS; i++) {
+		// Find the last free tile in the row.
+		k = BOARD_COLUMNS - 1;
+		while (k >= 0 && board->tiles[i][k]) {
+			k--;
+		}
+
 		// Shift tiles right across the row.
-		for (j = k = BOARD_COLUMNS - 1; j >= 0; j--) {
+		for (j = k - 1; j >= 0; j--) {
 			if (board->tiles[i][j]) {
 				board->tiles[i][k--] = board->tiles[i][j];
 				board->tiles[i][j] = 0;
