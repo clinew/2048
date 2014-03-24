@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
 
 		// Get the player's move.
 		memset((void*)input, 0, sizeof(input));
+		write(STDOUT_FILENO, (void*)"> ", 3);
 		if (read(STDIN_FILENO, (void*)input, sizeof(input) - 1)
 		    == -1) {
 			perror("Error reading input");
