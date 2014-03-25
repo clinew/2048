@@ -56,6 +56,46 @@ unsigned board_get_tiles_empty(struct board* board);
 void board_init(struct board* board);
 
 /**
+ * Merge tiles in the board downwards.
+ */
+int board_merge_down(struct board* board);
+
+/**
+ * Merge tiles in the board leftwards.
+ */
+int board_merge_left(struct board* board);
+
+/**
+ * Merge tiles in the board rightwards.
+ */
+int board_merge_right(struct board* board);
+
+/**
+ * Merge tiles in the board upwards.
+ */
+int board_merge_up(struct board* board);
+
+/**
+ * Processes user move-down request.
+ */
+int board_move_down(struct board* board);
+
+/**
+ * Process user move-left request.
+ */
+int board_move_left(struct board* board);
+
+/**
+ * Process user move-right request.
+ */
+int board_move_right(struct board* board);
+
+/**
+ * Process user move-up request.
+ */
+int board_move_up(struct board* board);
+
+/**
  * Spawn a new tile on the board.
  *
  * I didn't know what to call this, so "plopping" a value on the board sounds

@@ -46,13 +46,13 @@ int main(int argc, char* argv[]) {
 		}
 		input[strlen(input) - 1] = 0;
 		if (!strcmp(input, "u") || !strcmp(input, "up")) {
-			valid = board_shift_up(&board);
+			valid = board_move_up(&board);
 		} else if (!strcmp(input, "d") || !strcmp(input, "down")) {
-			valid = board_shift_down(&board);
+			valid = board_move_down(&board);
 		} else if (!strcmp(input, "l") || !strcmp(input, "left")) {
-			valid = board_shift_left(&board);
+			valid = board_move_left(&board);
 		} else if (!strcmp(input, "r") || !strcmp(input, "right")) {
-			valid = board_shift_right(&board);
+			valid = board_move_right(&board);
 		} else {
 			printf("Don't understand input: %s.\n", input);
 			continue;

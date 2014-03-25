@@ -91,6 +91,179 @@ void board_init(struct board* board) {
 	board_plop(board);
 }
 
+int board_merge_down(struct board* board) {
+	int i;
+	int j;
+	int k;
+	int merge;
+
+	// Merge elements downwards.
+	merge = 0;
+	for (i = 0; i < BOARD_COLUMNS; i++) {
+		j = BOARD_ROWS - 1;
+		while (1) {
+			// Find two potential elements to merge.
+			while (j >= 0 && !board->tiles[j][i]) {
+				j--;
+			}
+			k = j - 1;
+			while (k >= 0 && !board->tiles[k][i]) {
+				k--;
+			}
+			if (k < 0) {
+				break;
+			}
+
+			// Try to merge the tiles.
+			if (board->tiles[j][i] == board->tiles[k][i]) {
+				board->tiles[k][i] += board->tiles[k][i];
+				board->tiles[j][i] = 0;
+				j = k - 1;
+				merge = 1;
+			} else {
+				j = k;
+			}
+		}
+		
+	}
+
+	// Return whether an item was merged or not.
+	return merge;
+}
+
+int board_merge_left(struct board* board) {
+	int i;
+	int j;
+	int k;
+	int merge;
+
+	// Merge items leftwards.
+	merge = 0;
+	for (i = 0; i < BOARD_ROWS; i++) {
+		j = 0;
+		while (1) {
+			// Two two potential tiles to merge.
+			while (j < BOARD_COLUMNS && !board->tiles[i][j]) {
+				j++;
+			}
+			k = j + 1;
+			while (k < BOARD_COLUMNS && !board->tiles[i][k]) {
+				k++;
+			}
+			if (k >= BOARD_COLUMNS) {
+				break;
+			}
+
+			// Try to merge the tiles.
+			if (board->tiles[i][j] == board->tiles[i][k]) {
+				board->tiles[i][j] += board->tiles[i][j];
+				board->tiles[i][k] = 0;
+				j = k + 1;
+				merge = 1;
+			} else {
+				j = k;
+			}
+		}
+	}
+
+	// Return whether a tile was merged or not.
+	return merge;
+}
+
+int board_merge_right(struct board* board) {
+	int i;
+	int j;
+	int k;
+	int merge;
+
+	// Merge items rightward.
+	merge = 0;
+	for (i = 0; i < BOARD_ROWS; i++) {
+		j = BOARD_ROWS - 1;
+		while (1) {
+			// Find potential tiles to merge.
+			while (j >= 0 && !board->tiles[i][j]) {
+				j--;
+			}
+			k = j - 1;
+			while (k >= 0 && !board->tiles[i][k]) {
+				k--;
+			}
+			if (k < 0) {
+				break;
+			}
+
+			// Try to merge the tiles.
+			if (board->tiles[i][j] == board->tiles[i][k]) {
+				board->tiles[i][k] += board->tiles[i][k];
+				board->tiles[i][j] = 0;
+				j = k - 1;
+				merge = 1;
+			} else {
+				j = k;
+			}
+		}
+	}
+
+	// Return whether a tile was merged or not.
+	return merge;
+}
+
+int board_merge_up(struct board* board) {
+	int i;
+	int j;
+	int k;
+	int merge;
+
+	// Merge elements upwards.
+	merge = 0;
+	for (i = 0; i < BOARD_COLUMNS; i++) {
+		j = 0;
+		while (1) {
+			// Find two potential tiles to merge.
+			while (j < BOARD_ROWS && !board->tiles[j][i]) {
+				j++;
+			}
+			k = j + 1;
+			while (k < BOARD_ROWS && !board->tiles[k][i]) {
+				k++;
+			}
+			if (k >= BOARD_ROWS) {
+				break;
+			}
+
+			// Try to merge the tiles.
+			if (board->tiles[j][i] == board->tiles[k][i]) {
+				board->tiles[j][i] += board->tiles[j][i];
+				board->tiles[k][i] = 0;
+				j = k + 1;
+				merge = 1;
+			} else {
+				j = k;
+			}
+		}
+	}
+
+	// Return whether an item was merged or not.
+	return merge;
+}
+
+int board_move_down(struct board* board) {
+	return board_merge_down(board) | board_shift_down(board);
+}
+
+int board_move_left(struct board* board) {
+	return board_merge_left(board) | board_shift_left(board);
+}
+
+int board_move_right(struct board* board) {
+	return board_merge_right(board) | board_shift_right(board);
+}
+
+int board_move_up(struct board* board) {
+	return board_merge_up(board) | board_shift_up(board);
+}
+
 void board_plop(struct board* board) {
 	int i;
 	int j;
