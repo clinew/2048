@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include "arguments.h"
@@ -46,13 +47,13 @@ void usage_print(char* message) {
 	exit(EXIT_FAILURE);
 }
 
-
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
 	char input[1024];
 	char* message;
 	int status; // Game status.
+	struct termios term_settings;
 	int valid;
 
 	// Print legal shenanigains.
@@ -78,6 +79,8 @@ int main(int argc, char* argv[]) {
 	} else {
 		srand(time(NULL));
 	}
+
+	initialize_tty(&term_settings);
 
 	// Set up board.
 	board_init(&board);
