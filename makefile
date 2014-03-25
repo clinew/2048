@@ -29,10 +29,10 @@ all: ${files} ${output}
 # Compile the programs.
 #${executables}: ${sources}
 ${files}: %: %.c
-	${compiler} -c $< ${libraries}
+	${compiler} ${flags} -c $< ${libraries}
 
 ${output}: ${objects}
-	${compiler} -o ${output} ${objects}
+	${compiler} ${flags} -o ${output} ${objects}
 
 # Remove all the output files.
 clean: tidy
