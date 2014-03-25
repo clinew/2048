@@ -127,8 +127,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Print the final board.
-	printf("Game over, you %s!", (status < 0) ? "LOSE" : "WIN");
-	board_print(&board);
+	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
+	fputs("Press space to exit.\n", stdout);
+	while (getchar() != ' ') { /* wait */ }
+	fputs("\33[?1049l", stdout);
 
 	// Return success.
 	return EXIT_SUCCESS;
