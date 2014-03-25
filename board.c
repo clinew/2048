@@ -299,7 +299,11 @@ void board_print(struct board* board) {
 	for (i = 0; i < BOARD_ROWS; i++) {
 		printf(" ");
 		for (j = 0; j < BOARD_COLUMNS; j++) {
-			printf("%4u ", board->tiles[i][j]);
+			if (board->tiles[i][j]) {
+				printf("%4u ", board->tiles[i][j]);
+			} else {
+				printf("   . ");
+			}
 		}
 		printf("\n");
 	}

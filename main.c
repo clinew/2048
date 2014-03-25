@@ -15,6 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -67,12 +68,9 @@ int main(int argc, char* argv[]) {
 	}
 	
 	// Print the final board.
-	printf("Game over, you ");
-	if (status < 0) {
-		printf("LOSE");
-	} else {
-		printf("WIN");
-	}
-	printf("!\n");
+	printf("Game over, you %s!", (status < 0) ? "LOSE" : "WIN");
 	board_print(&board);
+
+	// Return success.
+	return EXIT_SUCCESS;
 }
