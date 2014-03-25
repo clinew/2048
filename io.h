@@ -1,11 +1,22 @@
+#ifndef io_H
+#define io_H
+
+
 #define _POSIX_C_SOURCE 1
 
+
 #include <signal.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
 
+
+/**
+ * Puts the TTY into some kind of raw mode; switches to the alternate buffer;
+ * and sets up a SIGINT handler to switch back to the regular buffer.
+ */
 void initialize_tty(struct termios* term_settings);
-int get_token_utf8(uint8_t queue[]);
+
+
+#endif // io_H
