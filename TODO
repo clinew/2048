@@ -1,0 +1,7 @@
+- Add movement keysets; "wasd", "vim".
+- Add README.
+- Add score total.
+- Add new game option.
+- Add help menu.
+- Use random seed.
+- Allow custom seed.
