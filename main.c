@@ -17,12 +17,18 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include "board.h"
 
 
+struct termios term_settings;
+
+
 int main(int argc, char* argv[]) {
+    initialize_tty(&term_settings);
+
 	struct board board;
 	char input[1024];
 	int status; // Game status.
