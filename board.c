@@ -53,7 +53,7 @@ int board_done(struct board* board) {
 			}
 		}
 	}
-	
+
 	// No possible merges.
 	return -1;
 }
@@ -274,14 +274,14 @@ void board_plop(struct board* board) {
 	tiles_empty = board_get_tiles_empty(board);
 
 	// Choose a random tile to palce the value into.
-	target = random() % tiles_empty;
+	target = rand() % tiles_empty;
 
 	// Place the value into the tile. Implemented poorly.
 	tiles_empty = 0;
 	for (i = 0; i < BOARD_ROWS; i++) {
 		for (j = 0; j < BOARD_COLUMNS; j++) {
 			if (target == tiles_empty && board->tiles[i][j] == 0) {
-				board->tiles[i][j] = (random() % 100 <=
+				board->tiles[i][j] = (rand() % 100 <=
 						BOARD_4SPAWN_CHANCE) ? 4 : 2;
 				tiles_empty++;
 			} else if (board->tiles[i][j] == 0) {
