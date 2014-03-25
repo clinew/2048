@@ -341,7 +341,7 @@ int board_shift_up(struct board* board) {
 int board_shift_down(struct board* board) {
 	int i;
 	int j;
-	unsigned k;
+	int k;
 	int valid;
 
 	// Shift tiles down the columns.
@@ -399,7 +399,7 @@ int board_shift_left(struct board* board) {
 int board_shift_right(struct board* board) {
 	int i;
 	int j;
-	unsigned k;
+	int k;
 	int valid;
 
 	// Shift tiles right across the rows.
