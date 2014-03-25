@@ -31,11 +31,11 @@ struct termios term_settings;
 
 
 int main(int argc, char* argv[]) {
-    initialize_tty(&term_settings);
+	initialize_tty(&term_settings);
 
 
 	struct board board;
-    char c;
+	char c;
 	int status; // Game status.
 	int valid;
 
@@ -44,22 +44,22 @@ int main(int argc, char* argv[]) {
 
 	// Play the game.
 	while (!(status = board_done(&board))) {
-        // Print legal shenanigains.
-        fputs("\33[2J", stdout); // clear display
-        fputs("\33[H", stdout); // put cursor at 0,0
-        printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-               "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-               "\tfree software, and you are welcome to redistribute it\n"
-               "\tunder certain conditions. See the file 'COPYING' in the\n"
-               "\tsource code for details.\n\n");
+		// Print legal shenanigains.
+		fputs("\33[2J", stdout); // clear display
+		fputs("\33[H", stdout); // put cursor at 0,0
+		printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+			   "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+			   "\tfree software, and you are welcome to redistribute it\n"
+			   "\tunder certain conditions. See the file 'COPYING' in the\n"
+			   "\tsource code for details.\n\n");
 
 		// Print the board.
 		board_print(&board);
 
 		// Get the player's move.
 		valid = 0;
-        c = getchar();
-        if (c == 'w' || c == 'k')
+		c = getchar();
+		if (c == 'w' || c == 'k')
 			valid = board_move_up(&board);
 		else if (c == 's' || c == 'j')
 			valid = board_move_down(&board);
@@ -79,8 +79,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Print the final board.
-	printf("Game over, you %s!", (status < 0) ? "LOSE" : "WIN");
-	board_print(&board);
+	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
+	fputs("Press space to exit.\n", stdout);
+	while (getchar() != ' ') { /* wait */ }
+	fputs("\33[?1049l", stdout);
 
 	// Return success.
 	return EXIT_SUCCESS;
