@@ -15,13 +15,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define _POSIX_C_SOURCE 200112L
+
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "arguments.h"
 #include "board.h"
+#include "io.h"
 
 
 #define VERSION "1.0.0"
@@ -50,7 +55,7 @@ void usage_print(char* message) {
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
-	char input[1024];
+	char input;
 	char* message;
 	int status; // Game status.
 	struct termios term_settings;
@@ -84,34 +89,34 @@ int main(int argc, char* argv[]) {
 
 	// Set up board.
 	board_init(&board);
-	
+
 	// Play the game.
 	while (!(status = board_done(&board))) {
+		// Print legal shenanigains.
+		fputs("\33[2J", stdout); // clear display
+		fputs("\33[H", stdout); // put cursor at 0,0
+		printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+		       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+		       "\tfree software, and you are welcome to redistribute it\n"
+		       "\tunder certain conditions. See the file 'COPYING' in the\n"
+		       "\tsource code for details.\n\n");
+
 		// Print the board.
 		board_print(&board);
 
 		// Get the player's move.
 		valid = 0;
-		memset((void*)input, 0, sizeof(input));
-		write(STDOUT_FILENO, (void*)"> ", 3);
-		if (read(STDIN_FILENO, (void*)input, sizeof(input) - 1)
-		    == -1) {
-			perror("Error reading input");
-			break;
-		}
-		input[strlen(input) - 1] = 0;
-		if (!strcmp(input, "w") || !strcmp(input, "k")) {
+		input = getchar();
+		if (input == 'w' || input == 'k')
 			valid = board_move_up(&board);
-		} else if (!strcmp(input, "s") || !strcmp(input, "j")) {
+		else if (input == 's' || input == 'j')
 			valid = board_move_down(&board);
-		} else if (!strcmp(input, "a") || !strcmp(input, "h")) {
+		else if (input == 'a' || input == 'h')
 			valid = board_move_left(&board);
-		} else if (!strcmp(input, "d") || !strcmp(input, "l")) {
+		else if (input == 'd' || input == 'l')
 			valid = board_move_right(&board);
-		} else {
-			printf("Don't understand input: %s.\n", input);
+		else
 			continue;
-		}
 
 		// Prepare for user's next move.
 		if (valid) {
@@ -120,7 +125,7 @@ int main(int argc, char* argv[]) {
 			printf("Invalid move.\n");
 		}
 	}
-	
+
 	// Print the final board.
 	printf("Game over, you %s!", (status < 0) ? "LOSE" : "WIN");
 	board_print(&board);

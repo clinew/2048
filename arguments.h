@@ -1,11 +1,13 @@
 #ifndef arguments_H
 #define arguments_H
 
+#define _POSIX_C_SOURCE 200112L
 
 #include <inttypes.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
