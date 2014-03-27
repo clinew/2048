@@ -13,10 +13,25 @@
 
 
 /**
- * Puts the TTY into some kind of raw mode; switches to the alternate buffer;
- * and sets up a SIGINT handler to switch back to the regular buffer.
+ * Puts the TTY into some kind of raw mode
  */
-void initialize_tty(struct termios* term_settings);
+void enter_raw_mode(struct termios* term_settings);
+
+
+/**
+ * Sets up a SIGINT handler to switch back to the regular buffer.
+ */
+void setup_signal_handlers();
+
+/**
+ * Enters the alternate screen buffer.
+ */
+void enter_alternate_buffer();
+
+/**
+ * Returns to the regular screen buffer.
+ */
+void leave_alternate_buffer();
 
 
 #endif // io_H

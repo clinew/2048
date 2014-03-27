@@ -29,23 +29,65 @@
 struct termios term_settings;
 
 
-int main(int argc, char* argv[]) {
-	initialize_tty(&term_settings);
+char* legal_shenanigans =
+	"2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+	"This program comes with ABSOLUTELY NO WARRANTY. This is\n"
+	"free software, and you are welcome to redistribute it\n"
+	"under certain conditions. See the file 'COPYING' in the\n"
+	"source code for details.\n";
 
+char* help_text =
+	"Usage: ./2048 [OPTION]...\n"
+	"Play 2048 from the command line.\n\n"
+	"\t--raw\t\tPut terminal in raw mode and use the alternate buffer\n"
+	"\t--legal\t\tDisplay legal shenanigans\n"
+	"\t--help\t\tDisplay this help text\n";
+
+
+int handle_args(int argc, char* argv[]) {
+	if (argc == 1)
+		return 0;
+
+	if (strcmp(argv[1], "--help") == 0) {
+		fputs(help_text, stdout);
+		exit(0);
+	}
+
+	if (strcmp(argv[1], "--legal") == 0) {
+		fputs(legal_shenanigans, stdout);
+		exit(0);
+	}
+
+	if (strcmp(argv[1], "--raw") == 0)
+		return 1;
+
+	fputs("Option not recognized.\n", stderr);
+	exit(1);
+}
+
+
+int main(int argc, char* argv[]) {
+	int raw = handle_args(argc, argv);
+
+	if (raw) {
+		setup_signal_handlers();
+		enter_alternate_buffer();
+		enter_raw_mode(&term_settings);
+	}
 
 	struct board board;
-	char c;
-	int status; // Game status.
+	char c; // Command
+	char input[1024]; // Input buffer
+	int status; // Game status
 	int valid;
 
-	// Print legal shenanigains.
-	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-		   "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-		   "\tfree software, and you are welcome to redistribute it\n"
-		   "\tunder certain conditions. See the file 'COPYING' in the\n"
-		   "\tsource code for details.\n\n");
+	if (!raw) {
+		// Print legal shenanigans.
+		fputs(legal_shenanigans, stdout);
+		fputs("\n\n", stdout);
+	}
 
-	// Set up random number generator
+	// Set up random number generator.
 	srand((int)time(NULL));
 
 	// Set up board.
@@ -53,21 +95,32 @@ int main(int argc, char* argv[]) {
 
 	// Play the game.
 	while (!(status = board_done(&board))) {
-		// Print legal shenanigains.
-		fputs("\33[2J", stdout); // clear display
-		fputs("\33[H", stdout); // put cursor at 0,0
-		printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-			   "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-			   "\tfree software, and you are welcome to redistribute it\n"
-			   "\tunder certain conditions. See the file 'COPYING' in the\n"
-			   "\tsource code for details.\n\n");
+		if (raw) {
+			// Clear display and put cursor at 0,0.
+			fputs("\33[2J\33[H", stdout);
+
+			// Print legal shenanigans.
+			fputs(legal_shenanigans, stdout);
+		} else {
+			fputc('\n', stdout);
+		}
 
 		// Print the board.
 		board_print(&board);
 
+		if (!raw) {
+			fputs("> ", stdout);
+		}
+
 		// Get the player's move.
 		valid = 0;
-		c = getchar();
+		if (raw) {
+			c = getchar();
+		} else {
+			fgets(input, 1024, stdin);
+			c = input[0];
+		}
+
 		if (c == 'w' || c == 'k')
 			valid = board_move_up(&board);
 		else if (c == 's' || c == 'j')
@@ -77,21 +130,29 @@ int main(int argc, char* argv[]) {
 		else if (c == 'd' || c == 'l')
 			valid = board_move_right(&board);
 		else
-			continue;
+			valid = -1;
 
-		// Prepare for user's next move.
-		if (valid) {
-			board_plop(&board);
+		if (!raw) {
+			// Prepare for user's next move.
+			if (valid == 0) {
+				fputs("Invalid move.\n", stdout);
+			} else if (valid == 1) {
+				board_plop(&board);
+			} else {
+				fputs("Invalid command.\n", stdout);
+			}
 		} else {
-			printf("Invalid move.\n");
+			board_plop(&board);
 		}
 	}
 
 	// Print the final board.
-	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
-	fputs("Press space to exit.\n", stdout);
-	while (getchar() != ' ') { /* wait */ }
-	fputs("\33[?1049l", stdout);
+	fputs("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN", stdout);
+	if (raw) {
+		fputs("Press space to exit.\n", stdout);
+		while (getchar() != ' ') { /* wait */ }
+		leave_alternate_buffer();
+	}
 
 	// Return success.
 	return EXIT_SUCCESS;
