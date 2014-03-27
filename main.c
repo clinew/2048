@@ -40,10 +40,10 @@ int main(int argc, char* argv[]) {
 
 	// Print legal shenanigains.
 	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-	       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-	       "\tfree software, and you are welcome to redistribute it\n"
-	       "\tunder certain conditions. See the file 'COPYING' in the\n"
-	       "\tsource code for details.\n\n");
+		   "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+		   "\tfree software, and you are welcome to redistribute it\n"
+		   "\tunder certain conditions. See the file 'COPYING' in the\n"
+		   "\tsource code for details.\n\n");
 
 	// Set up random number generator
 	srand((int)time(NULL));
