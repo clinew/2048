@@ -49,11 +49,12 @@ char* help_text =
 
 
 int handle_args(int argc, char* argv[]) {
+	// Default to raw mode
 	if (argc == 1)
-		return 0;
-
-	if (strcmp(argv[1], "--raw") == 0)
 		return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+
+	if (strcmp(argv[1], "--no-raw") == 0)
+		return 0;
 
 	if (strcmp(argv[1], "--help") == 0) {
 		print(help_text);
@@ -112,11 +113,11 @@ int main(int argc, char* argv[]) {
 		// Print the board.
 		board_print(&board);
 
-		fflush(stdout);
-
 		if (!raw) {
 			print("> ");
 		}
+
+		fflush(stdout);
 
 		// Get the player's move.
 		valid = 0;
