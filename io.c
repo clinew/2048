@@ -30,11 +30,6 @@ void leave_alternate_buffer() {
 }
 
 void enter_raw_mode(struct termios* term_settings) {
-	if (!isatty(STDOUT_FILENO)) {
-		fputs("Output is not a tty. Dying.\n", stderr);
-		exit(1);
-	}
-
 	tcgetattr(STDOUT_FILENO, term_settings);
 
 	term_settings->c_lflag &= ~(ICANON | ECHO);

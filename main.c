@@ -42,7 +42,8 @@ char* legal_shenanigans =
 char* help_text =
 	"Usage: ./2048 [OPTION]...\n"
 	"Play 2048 from the command line.\n\n"
-	"\t--raw\t\tPut terminal in raw mode and use the alternate buffer\n"
+	"\t--raw\t\tIf supported, put terminal in raw mode and use the\n"
+	"\t\t\talternate buffer\n"
 	"\t--legal\t\tDisplay legal shenanigans\n"
 	"\t--help\t\tDisplay this help text\n";
 
@@ -50,6 +51,9 @@ char* help_text =
 int handle_args(int argc, char* argv[]) {
 	if (argc == 1)
 		return 0;
+
+	if (strcmp(argv[1], "--raw") == 0)
+		return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 
 	if (strcmp(argv[1], "--help") == 0) {
 		print(help_text);
@@ -60,9 +64,6 @@ int handle_args(int argc, char* argv[]) {
 		print(legal_shenanigans);
 		exit(0);
 	}
-
-	if (strcmp(argv[1], "--raw") == 0)
-		return 1;
 
 	print("Option not recognized.\n");
 	exit(1);
@@ -110,6 +111,8 @@ int main(int argc, char* argv[]) {
 
 		// Print the board.
 		board_print(&board);
+
+		fflush(stdout);
 
 		if (!raw) {
 			print("> ");
