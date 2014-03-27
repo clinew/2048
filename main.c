@@ -19,10 +19,15 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "arguments.h"
 #include "board.h"
 
 
+#define VERSION "1.0.0"
+
+
 int main(int argc, char* argv[]) {
+	struct arguments arguments;
 	struct board board;
 	char input[1024];
 	int status; // Game status.
@@ -34,9 +39,24 @@ int main(int argc, char* argv[]) {
 	       "\tfree software, and you are welcome to redistribute it\n"
 	       "\tunder certain conditions. See the file 'COPYING' in the\n"
 	       "\tsource code for details.\n\n");
+	
+	// Parse arguments.
+	if (arguments_parse(&arguments, argc, argv) == -1) {
+		exit(EXIT_FAILURE);
+	}
+
+	// Apply arguments.
+	if (arguments.flags & ARGUMENTS_VERSION) {
+		printf("%s\n", VERSION);
+		exit(EXIT_SUCCESS);
+	}
+	if (arguments.flags & ARGUMENTS_SEED) {
+		srand(arguments.seed);
+	} else {
+		srand(time(NULL));
+	}
 
 	// Set up board.
-	srand(time(NULL));
 	board_init(&board);
 	
 	// Play the game.

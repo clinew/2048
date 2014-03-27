@@ -17,7 +17,7 @@
 compiler = gcc
 flags = -Wall -Werror --pedantic-errors --std=c99
 #libraries = -lm
-files = board main
+files = arguments board main
 output = 2048
 headers = ${files:=.h}
 objects = ${files:=.o}
