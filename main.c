@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
 	       "\tsource code for details.\n\n");
 
 	// Set up board.
+	srand(time(NULL));
 	board_init(&board);
 	
 	// Play the game.
