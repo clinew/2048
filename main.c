@@ -65,7 +65,11 @@ void usage_print(char* message) {
 }
 
 int handle_args(int argc, char* argv[]) {
+	// Default to raw mode
 	if (argc == 1)
+		return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+
+	if (strcmp(argv[1], "--no-raw") == 0)
 		return 0;
 
 	if (strcmp(argv[1], "--help") == 0) {
@@ -161,6 +165,8 @@ int main(int argc, char* argv[]) {
 		if (!raw) {
 			fputs("> ", stdout);
 		}
+
+		fflush(stdout);
 
 		// Get the player's move.
 		valid = 0;
