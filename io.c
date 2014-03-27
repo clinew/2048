@@ -1,15 +1,13 @@
 #include "io.h"
 
 
-void sigint_handler(int signum)
-{
+void sigint_handler(int signum) {
 	fputs("\33[?1049l", stdout);
-	exit(0);
+	exit(1);
 }
 
 
-void setup_signal_handlers()
-{
+void setup_signal_handlers() {
 	struct sigaction sa;
 	sa.sa_handler = sigint_handler;
 
