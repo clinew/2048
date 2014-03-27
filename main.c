@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "board.h"
@@ -36,6 +37,16 @@ int main(int argc, char* argv[]) {
 	char c;
 	int status; // Game status.
 	int valid;
+
+	// Print legal shenanigains.
+	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+	       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+	       "\tfree software, and you are welcome to redistribute it\n"
+	       "\tunder certain conditions. See the file 'COPYING' in the\n"
+	       "\tsource code for details.\n\n");
+
+	// Set up random number generator
+	srand((int)time(NULL));
 
 	// Set up board.
 	board_init(&board);
