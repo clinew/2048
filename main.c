@@ -26,10 +26,32 @@
 #define VERSION "1.0.0"
 
 
+/**
+ * Print the usage message and exit failure.
+ */
+void usage_print(char* message) {
+	// Print a specific error message.
+	if (message) {
+		fprintf(stderr, "ERROR: %s.\n", message);
+	}
+	
+	// Print the generic usage message.
+	fprintf(stderr, "\nUSAGE: 2048 [OPTIONS...]\n");
+	fprintf(stderr, "  -s, --seed     Use specified seed for pseudo-random "
+			"number generation.\n");
+	fprintf(stderr, "      --version  Output version information and "
+			"exit.\n");
+	
+	// Exit failure.
+	exit(EXIT_FAILURE);
+}
+
+
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
 	char input[1024];
+	char* message;
 	int status; // Game status.
 	int valid;
 
@@ -41,8 +63,9 @@ int main(int argc, char* argv[]) {
 	       "\tsource code for details.\n\n");
 	
 	// Parse arguments.
-	if (arguments_parse(&arguments, argc, argv) == -1) {
-		exit(EXIT_FAILURE);
+	message = arguments_parse(&arguments, argc, argv);
+	if (message) {
+		usage_print(message);
 	}
 
 	// Apply arguments.

@@ -28,7 +28,12 @@ struct arguments {
 /**
  * Parse the arguments provided by the user.
  */
-int arguments_parse(struct arguments* arguments, int argc, char* argv[]);
+char* arguments_parse(struct arguments* arguments, int argc, char* argv[]);
+
+/**
+ * Parse a user-specified seed.
+ */
+char* arguments_parse_seed(struct arguments* arguments, char* arg);
 
 
 #endif // arguments_H
