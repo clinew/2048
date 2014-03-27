@@ -26,6 +26,9 @@
 #include "io.h"
 
 
+#define print(x) fputs((x), stdout)
+
+
 struct termios term_settings;
 
 
@@ -49,19 +52,19 @@ int handle_args(int argc, char* argv[]) {
 		return 0;
 
 	if (strcmp(argv[1], "--help") == 0) {
-		fputs(help_text, stdout);
+		print(help_text);
 		exit(0);
 	}
 
 	if (strcmp(argv[1], "--legal") == 0) {
-		fputs(legal_shenanigans, stdout);
+		print(legal_shenanigans);
 		exit(0);
 	}
 
 	if (strcmp(argv[1], "--raw") == 0)
 		return 1;
 
-	fputs("Option not recognized.\n", stderr);
+	print("Option not recognized.\n");
 	exit(1);
 }
 
@@ -83,8 +86,8 @@ int main(int argc, char* argv[]) {
 
 	if (!raw) {
 		// Print legal shenanigans.
-		fputs(legal_shenanigans, stdout);
-		fputs("\n\n", stdout);
+		print(legal_shenanigans);
+		print("\n\n");
 	}
 
 	// Set up random number generator.
@@ -97,10 +100,10 @@ int main(int argc, char* argv[]) {
 	while (!(status = board_done(&board))) {
 		if (raw) {
 			// Clear display and put cursor at 0,0.
-			fputs("\33[2J\33[H", stdout);
+			print("\33[2J\33[H");
 
 			// Print legal shenanigans.
-			fputs(legal_shenanigans, stdout);
+			print(legal_shenanigans);
 		} else {
 			fputc('\n', stdout);
 		}
@@ -109,7 +112,7 @@ int main(int argc, char* argv[]) {
 		board_print(&board);
 
 		if (!raw) {
-			fputs("> ", stdout);
+			print("> ");
 		}
 
 		// Get the player's move.
@@ -135,11 +138,11 @@ int main(int argc, char* argv[]) {
 		if (!raw) {
 			// Prepare for user's next move.
 			if (valid == 0) {
-				fputs("Invalid move.\n", stdout);
+				print("Invalid move.\n");
 			} else if (valid == 1) {
 				board_plop(&board);
 			} else {
-				fputs("Invalid command.\n", stdout);
+				print("Invalid command.\n");
 			}
 		} else {
 			board_plop(&board);
@@ -147,9 +150,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Print the final board.
-	fputs("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN", stdout);
+	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
 	if (raw) {
-		fputs("Press space to exit.\n", stdout);
+		print("Press space to exit.\n");
 		while (getchar() != ' ') { /* wait */ }
 		leave_alternate_buffer();
 	}
