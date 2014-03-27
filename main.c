@@ -18,6 +18,7 @@
 #define _POSIX_C_SOURCE 200112L
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
@@ -31,6 +32,12 @@
 
 #define VERSION "1.0.0"
 
+char* legal_shenanigans =
+	"2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+	"This program comes with ABSOLUTELY NO WARRANTY. This is\n"
+	"free software, and you are welcome to redistribute it\n"
+	"under certain conditions. See the file 'COPYING' in the\n"
+	"source code for details.\n";
 
 /**
  * Print the usage message and exit failure.
@@ -43,23 +50,57 @@ void usage_print(char* message) {
 	
 	// Print the generic usage message.
 	fprintf(stderr, "\nUSAGE: 2048 [OPTIONS...]\n");
+	fprintf(stderr, "      --help     Display this help text.\n");
+	fprintf(stderr, "      --legal    Display legal information.\n");
 	fprintf(stderr, "  -s, --seed     Use specified seed for pseudo-random "
 			"number generation.\n");
 	fprintf(stderr, "      --version  Output version information and "
 			"exit.\n");
 	
 	// Exit failure.
-	exit(EXIT_FAILURE);
+	if (message) {
+		exit(EXIT_FAILURE);
+	}
+	exit(EXIT_SUCCESS);
 }
+
+int handle_args(int argc, char* argv[]) {
+	if (argc == 1)
+		return 0;
+
+	if (strcmp(argv[1], "--help") == 0) {
+		usage_print(NULL);
+	}
+
+	if (strcmp(argv[1], "--legal") == 0) {
+		fputs(legal_shenanigans, stdout);
+		exit(EXIT_SUCCESS);
+	}
+
+	if (strcmp(argv[1], "--raw") == 0)
+		return 1;
+
+	fputs("Option not recognized.\n", stderr);
+	exit(1);
+}
+
 
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
 	char input;
 	char* message;
+	int raw;
 	int status; // Game status.
 	struct termios term_settings;
 	int valid;
+
+	raw = handle_args(argc, argv);
+	if (raw) {
+		setup_signal_handlers();
+		enter_alternate_buffer();
+		enter_raw_mode(&term_settings);
+	}
 
 	// Print legal shenanigains.
 	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
@@ -85,7 +126,11 @@ int main(int argc, char* argv[]) {
 		srand(time(NULL));
 	}
 
-	initialize_tty(&term_settings);
+	if (!raw) {
+		// Print legal shenanigans.
+		fputs(legal_shenanigans, stdout);
+		fputs("\n\n", stdout);
+	}
 
 	// Set up board.
 	board_init(&board);
@@ -100,13 +145,34 @@ int main(int argc, char* argv[]) {
 		       "\tfree software, and you are welcome to redistribute it\n"
 		       "\tunder certain conditions. See the file 'COPYING' in the\n"
 		       "\tsource code for details.\n\n");
+		if (raw) {
+			// Clear display and put cursor at 0,0.
+			fputs("\33[2J\33[H", stdout);
+
+			// Print legal shenanigans.
+			fputs(legal_shenanigans, stdout);
+		} else {
+			fputc('\n', stdout);
+		}
 
 		// Print the board.
 		board_print(&board);
 
+		if (!raw) {
+			fputs("> ", stdout);
+		}
+
 		// Get the player's move.
 		valid = 0;
 		input = getchar();
+		if (raw) {
+			input = getchar();
+		} else {
+			char raw_input[1024];
+			fgets(raw_input, sizeof(raw_input), stdin);
+			input = raw_input[0];
+		}
+
 		if (input == 'w' || input == 'k')
 			valid = board_move_up(&board);
 		else if (input == 's' || input == 'j')
@@ -116,21 +182,29 @@ int main(int argc, char* argv[]) {
 		else if (input == 'd' || input == 'l')
 			valid = board_move_right(&board);
 		else
-			continue;
+			valid = -1;
 
-		// Prepare for user's next move.
-		if (valid) {
-			board_plop(&board);
+		if (!raw) {
+			// Prepare for user's next move.
+			if (valid == 0) {
+				fputs("Invalid move.\n", stdout);
+			} else if (valid == 1) {
+				board_plop(&board);
+			} else {
+				fputs("Invalid command.\n", stdout);
+			}
 		} else {
-			printf("Invalid move.\n");
+			board_plop(&board);
 		}
 	}
 
 	// Print the final board.
 	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
-	fputs("Press space to exit.\n", stdout);
-	while (getchar() != ' ') { /* wait */ }
-	fputs("\33[?1049l", stdout);
+	if (raw) {
+		fputs("Press space to exit.\n", stdout);
+		while (getchar() != ' ') { /* wait */ }
+		leave_alternate_buffer();
+	}
 
 	// Return success.
 	return EXIT_SUCCESS;

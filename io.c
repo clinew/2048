@@ -23,10 +23,15 @@ void setup_signal_handlers()
 }
 
 
-void initialize_tty(struct termios* term_settings) {
-	setup_signal_handlers();
+void enter_alternate_buffer() {
 	fputs("\33[?1049h", stdout);
+}
 
+void leave_alternate_buffer() {
+	fputs("\33[?1049l", stdout);
+}
+
+void enter_raw_mode(struct termios* term_settings) {
 	if (!isatty(STDOUT_FILENO)) {
 		fputs("Output is not a tty. Dying.\n", stderr);
 		exit(1);
