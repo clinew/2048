@@ -170,7 +170,6 @@ int main(int argc, char* argv[]) {
 
 		// Get the player's move.
 		valid = 0;
-		input = getchar();
 		if (raw) {
 			input = getchar();
 		} else {
