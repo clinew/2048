@@ -11,10 +11,14 @@
 
 
 /**
- * Puts the TTY into some kind of raw mode
+ * Puts the terminal into some kind of raw mode.
  */
 void enter_raw_mode(struct termios* term_settings);
 
+/**
+ * Restores the original terminal mode.
+ */
+void restore_mode();
 
 /**
  * Sets up a SIGINT handler to switch back to the regular buffer.

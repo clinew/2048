@@ -1,8 +1,12 @@
 #include "io.h"
 
 
+struct termios saved_term_settings;
+
+
 void sigint_handler(int signum) {
-	fputs("\33[?1049l", stdout);
+	restore_mode();
+	leave_alternate_buffer();
 	exit(1);
 }
 
@@ -37,10 +41,16 @@ void enter_raw_mode(struct termios* term_settings) {
 
 	tcgetattr(STDOUT_FILENO, term_settings);
 
+	saved_term_settings = *term_settings;
+
 	term_settings->c_lflag &= ~(ICANON | ECHO);
 
 	tcsetattr(STDOUT_FILENO, TCSADRAIN, term_settings);
 
 	setvbuf(stdin, NULL, _IONBF, BUFSIZ);
 	setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+}
+
+void restore_mode() {
+	tcsetattr(STDOUT_FILENO, TCSADRAIN, &saved_term_settings);
 }
