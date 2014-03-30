@@ -209,6 +209,7 @@ int main(int argc, char* argv[]) {
 	if (raw) {
 		fputs("Press space to exit.\n", stdout);
 		while (getchar() != ' ') { /* wait */ }
+		restore_mode();
 		leave_alternate_buffer();
 	}
 
