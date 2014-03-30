@@ -190,17 +190,14 @@ int main(int argc, char* argv[]) {
 		else
 			valid = -1;
 
-		if (!raw) {
-			// Prepare for user's next move.
-			if (valid == 0) {
-				fputs("Invalid move.\n", stdout);
-			} else if (valid == 1) {
+		// Prepare for user's next move.
+		if (raw || valid == 1) {
+			if (board_get_tiles_empty(&board) != 0)
 				board_plop(&board);
-			} else {
-				fputs("Invalid command.\n", stdout);
-			}
+		} else if (valid == 0) {
+			fputs("Invalid move.\n", stdout);
 		} else {
-			board_plop(&board);
+			fputs("Invalid command.\n", stdout);
 		}
 	}
 
