@@ -273,9 +273,6 @@ void board_plop(struct board* board) {
 	// Count number of empty tiles.
 	tiles_empty = board_get_tiles_empty(board);
 
-	if (tiles_empty == 0)
-		return;
-
 	// Choose a random tile to palce the value into.
 	target = rand() % tiles_empty;
 
