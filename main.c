@@ -187,19 +187,12 @@ int main(int argc, char* argv[]) {
 		else if (input == 'd' || input == 'l')
 			valid = board_move_right(&board);
 		else
-			valid = -1;
+			valid = 0;
 
-		if (!raw) {
-			// Prepare for user's next move.
-			if (valid == 0) {
-				fputs("Invalid move.\n", stdout);
-			} else if (valid == 1) {
-				board_plop(&board);
-			} else {
-				fputs("Invalid command.\n", stdout);
-			}
-		} else {
+		if (valid) {
 			board_plop(&board);
+		} else {
+			printf("Invalid move.\n");
 		}
 	}
 
