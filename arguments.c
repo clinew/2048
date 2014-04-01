@@ -17,14 +17,31 @@ char* arguments_parse(struct arguments* arguments, int argc, char* argv[]) {
 			   !strcmp(argv[i], "-s")) {
 			arguments->flags |= ARGUMENTS_SEED;
 			if (++i >= argc) {
-				return "Seed declared but not defined.";
+				return "Seed declared but not defined";
 			}
 			message = arguments_parse_seed(arguments, argv[i]);
 			if (message) {
 				return message;
 			}
+		} else if (!strcmp(argv[i], "--mode") ||
+			   !strcmp(argv[i], "-m")) {
+			arguments->flags |= ARGUMENTS_MODE;
+			if (++i >= argc) {
+				return "Mode declared but not defined";
+			}
+			if (!strcmp(argv[i], "raw")) {
+				arguments->mode = mode_raw;
+			} else if (!strcmp(argv[i], "tty")) {
+				arguments->mode = mode_tty;
+			} else {
+				return "Mode not recognized";
+			}
+		} else if (!strcmp(argv[i], "--help")) {
+			arguments->flags |= ARGUMENTS_HELP;
+		} else if (!strcmp(argv[i], "--legal")) {
+			arguments->flags |= ARGUMENTS_LEGAL;
 		} else {
-			return "Unrecognized argument.";
+			return "Unrecognized argument";
 		}
 	}
 

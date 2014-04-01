@@ -52,6 +52,7 @@ void usage_print(char* message) {
 	fprintf(stderr, "\nUSAGE: 2048 [OPTIONS...]\n");
 	fprintf(stderr, "      --help     Display this help text.\n");
 	fprintf(stderr, "      --legal    Display legal information.\n");
+	fprintf(stderr, "  -m, --mode     Select output mode.\n");
 	fprintf(stderr, "  -s, --seed     Use specified seed for pseudo-random "
 			"number generation.\n");
 	fprintf(stderr, "      --version  Output version information and "
@@ -64,31 +65,6 @@ void usage_print(char* message) {
 	exit(EXIT_SUCCESS);
 }
 
-int handle_args(int argc, char* argv[]) {
-	// Default to raw mode
-	if (argc == 1)
-		return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
-
-	if (strcmp(argv[1], "--no-raw") == 0)
-		return 0;
-
-	if (strcmp(argv[1], "--help") == 0) {
-		usage_print(NULL);
-	}
-
-	if (strcmp(argv[1], "--legal") == 0) {
-		fputs(legal_shenanigans, stdout);
-		exit(EXIT_SUCCESS);
-	}
-
-	if (strcmp(argv[1], "--raw") == 0)
-		return 1;
-
-	fputs("Option not recognized.\n", stderr);
-	exit(1);
-}
-
-
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
@@ -99,20 +75,6 @@ int main(int argc, char* argv[]) {
 	struct termios term_settings;
 	int valid;
 
-	raw = handle_args(argc, argv);
-	if (raw) {
-		setup_signal_handlers();
-		enter_alternate_buffer();
-		enter_raw_mode(&term_settings);
-	}
-
-	// Print legal shenanigains.
-	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-	       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-	       "\tfree software, and you are welcome to redistribute it\n"
-	       "\tunder certain conditions. See the file 'COPYING' in the\n"
-	       "\tsource code for details.\n\n");
-	
 	// Parse arguments.
 	message = arguments_parse(&arguments, argc, argv);
 	if (message) {
@@ -120,9 +82,35 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Apply arguments.
+	valid = 1; // Hack; overload to determine whether to play or quit.
 	if (arguments.flags & ARGUMENTS_VERSION) {
 		printf("%s\n", VERSION);
+		valid = 0;
+	}
+	if (arguments.flags & ARGUMENTS_LEGAL) {
+		printf("%s\n", legal_shenanigans);
+		valid = 0;
+	}
+	if (arguments.flags & ARGUMENTS_HELP) {
+		usage_print(NULL);
+	}
+	if (!valid) {
 		exit(EXIT_SUCCESS);
+	}
+	if (arguments.flags & ARGUMENTS_MODE) {
+		if (arguments.mode == mode_tty) {
+			setup_signal_handlers();
+			enter_alternate_buffer();
+			enter_raw_mode(&term_settings);
+			raw = 1;
+		} else if (arguments.mode == mode_raw) {
+			raw = 0;
+		}
+	} else if (isatty(STDOUT_FILENO) && isatty(STDIN_FILENO)) {
+		setup_signal_handlers();
+		enter_alternate_buffer();
+		enter_raw_mode(&term_settings);
+		raw = 1;
 	}
 	if (arguments.flags & ARGUMENTS_SEED) {
 		srand(arguments.seed);
@@ -142,13 +130,15 @@ int main(int argc, char* argv[]) {
 	// Play the game.
 	while (!(status = board_done(&board))) {
 		// Print legal shenanigains.
-		fputs("\33[2J", stdout); // clear display
-		fputs("\33[H", stdout); // put cursor at 0,0
-		printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-		       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-		       "\tfree software, and you are welcome to redistribute it\n"
-		       "\tunder certain conditions. See the file 'COPYING' in the\n"
-		       "\tsource code for details.\n\n");
+		if (raw) {
+			fputs("\33[2J", stdout); // clear display
+			fputs("\33[H", stdout); // put cursor at 0,0
+			printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+			       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+			       "\tfree software, and you are welcome to redistribute it\n"
+			       "\tunder certain conditions. See the file 'COPYING' in the\n"
+			       "\tsource code for details.\n\n");
+		}
 		if (raw) {
 			// Clear display and put cursor at 0,0.
 			fputs("\33[2J\33[H", stdout);
