@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 	board_init(&board);
 
 	// Play the game.
-	while (!(status = board_done(&board))) {
+	while (1) {
 		// Print legal shenanigains.
 		fputs("\33[2J", stdout); // clear display
 		fputs("\33[H", stdout); // put cursor at 0,0
@@ -161,6 +161,10 @@ int main(int argc, char* argv[]) {
 
 		// Print the board.
 		board_print(&board);
+
+		status = board_done(&board);
+		if (status)
+			break;
 
 		if (!raw) {
 			fputs("> ", stdout);
