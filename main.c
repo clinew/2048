@@ -108,10 +108,10 @@ int main(int argc, char* argv[]) {
 
 	// Print legal shenanigains.
 	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-	       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-	       "\tfree software, and you are welcome to redistribute it\n"
-	       "\tunder certain conditions. See the file 'COPYING' in the\n"
-	       "\tsource code for details.\n\n");
+		   "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+		   "\tfree software, and you are welcome to redistribute it\n"
+		   "\tunder certain conditions. See the file 'COPYING' in the\n"
+		   "\tsource code for details.\n\n");
 	
 	// Parse arguments.
 	message = arguments_parse(&arguments, argc, argv);
@@ -141,14 +141,6 @@ int main(int argc, char* argv[]) {
 
 	// Play the game.
 	while (!(status = board_done(&board))) {
-		// Print legal shenanigains.
-		fputs("\33[2J", stdout); // clear display
-		fputs("\33[H", stdout); // put cursor at 0,0
-		printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-		       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-		       "\tfree software, and you are welcome to redistribute it\n"
-		       "\tunder certain conditions. See the file 'COPYING' in the\n"
-		       "\tsource code for details.\n\n");
 		if (raw) {
 			// Clear display and put cursor at 0,0.
 			fputs("\33[2J\33[H", stdout);
