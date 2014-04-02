@@ -1,0 +1,9 @@
+- Add README.
+- Add score total.
+- Add new game option.
+- Add help menu.
+
+- Merge drkitty's argument-parsing into new argument-parsing routine.
+- Fix broken terminal after game.
+- Test things.
+- Use printf.
