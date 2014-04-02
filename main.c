@@ -47,7 +47,7 @@ void usage_print(char* message) {
 	if (message) {
 		fprintf(stderr, "ERROR: %s.\n", message);
 	}
-	
+
 	// Print the generic usage message.
 	fprintf(stderr, "\nUSAGE: 2048 [OPTIONS...]\n");
 	fprintf(stderr, "      --help     Display this help text.\n");
@@ -56,13 +56,14 @@ void usage_print(char* message) {
 			"number generation.\n");
 	fprintf(stderr, "      --version  Output version information and "
 			"exit.\n");
-	
+
 	// Exit failure.
 	if (message) {
 		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
 }
+
 
 int handle_args(int argc, char* argv[]) {
 	// Default to raw mode
@@ -89,6 +90,19 @@ int handle_args(int argc, char* argv[]) {
 }
 
 
+void update_screen(struct board* board)
+{
+	// Clear display and put cursor at 0,0.
+	fputs("\33[2J\33[H", stdout);
+
+	// Print legal shenanigans.
+	fputs(legal_shenanigans, stdout);
+
+	// Print the board.
+	board_print(board);
+}
+
+
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
@@ -108,11 +122,11 @@ int main(int argc, char* argv[]) {
 
 	// Print legal shenanigains.
 	printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-	       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-	       "\tfree software, and you are welcome to redistribute it\n"
-	       "\tunder certain conditions. See the file 'COPYING' in the\n"
-	       "\tsource code for details.\n\n");
-	
+		   "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
+		   "\tfree software, and you are welcome to redistribute it\n"
+		   "\tunder certain conditions. See the file 'COPYING' in the\n"
+		   "\tsource code for details.\n\n");
+
 	// Parse arguments.
 	message = arguments_parse(&arguments, argc, argv);
 	if (message) {
@@ -141,26 +155,14 @@ int main(int argc, char* argv[]) {
 
 	// Play the game.
 	while (!(status = board_done(&board))) {
-		// Print legal shenanigains.
-		fputs("\33[2J", stdout); // clear display
-		fputs("\33[H", stdout); // put cursor at 0,0
-		printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-		       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-		       "\tfree software, and you are welcome to redistribute it\n"
-		       "\tunder certain conditions. See the file 'COPYING' in the\n"
-		       "\tsource code for details.\n\n");
 		if (raw) {
-			// Clear display and put cursor at 0,0.
-			fputs("\33[2J\33[H", stdout);
-
-			// Print legal shenanigans.
-			fputs(legal_shenanigans, stdout);
+			update_screen(&board);
 		} else {
 			fputc('\n', stdout);
-		}
 
-		// Print the board.
-		board_print(&board);
+			// Print the board.
+			board_print(&board);
+		}
 
 		if (!raw) {
 			fputs("> ", stdout);
@@ -197,6 +199,11 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Print the final board.
+	if (raw)
+		update_screen(&board);
+	else
+		board_print(&board);
+
 	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
 	if (raw) {
 		fputs("Press space to exit.\n", stdout);
