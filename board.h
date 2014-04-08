@@ -35,6 +35,10 @@
  * Represents the in-game board.
  */
 struct board {
+	// Total score for the current game.
+	unsigned score_current;
+	// Top score.
+	unsigned score_top;
 	// Holds the value of each tile.
 	unsigned tiles[BOARD_ROWS][BOARD_COLUMNS];
 };
@@ -128,6 +132,12 @@ int board_shift_right(struct board* board);
  * Shift all the elements in the board up.
  */
 int board_shift_up(struct board* board);
+
+/**
+ * Merges the specified tile 'b' into the specified tile 'a' and updates the
+ * total score.
+ */
+void board_tiles_merge(struct board* board, unsigned* a, unsigned* b);
 
 
 #endif // board_H
