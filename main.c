@@ -65,6 +65,19 @@ void usage_print(char* message) {
 	exit(EXIT_SUCCESS);
 }
 
+/**
+ * Get input from the user.
+ */
+char yoink(int raw) {
+	if (raw) {
+		return getchar();
+	} else {
+		char message[256];
+		fgets(message, sizeof(message), stdin);
+		return message[0];
+	}
+}
+
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
@@ -118,13 +131,14 @@ int main(int argc, char* argv[]) {
 		srand(time(NULL));
 	}
 
-	// Set up board.
+	// Set up the board.
 	board_init(&board);
 	if (!raw) {
 		fputs(legal, stdout);
 	}
 
 	// Play the game.
+play:
 	valid = 1;
 	while (!(status = board_done(&board))) {
 		// Set up screen for next move.
@@ -142,24 +156,26 @@ int main(int argc, char* argv[]) {
 		fflush(stdout);
 
 		// Get the player's move.
-		if (raw) {
-			input = getchar();
-		} else {
-			char raw_input[1024];
-			fgets(raw_input, sizeof(raw_input), stdin);
-			input = raw_input[0];
-		}
+		input = yoink(raw);
 
 		// Process player's move.
-		if (input == 'w' || input == 'k')
+		if (input == 'w' || input == 'k') {
 			valid = board_move_up(&board);
-		else if (input == 's' || input == 'j')
+		} else if (input == 's' || input == 'j') {
 			valid = board_move_down(&board);
-		else if (input == 'a' || input == 'h')
+		} else if (input == 'a' || input == 'h') {
 			valid = board_move_left(&board);
-		else if (input == 'd' || input == 'l')
+		} else if (input == 'd' || input == 'l') {
 			valid = board_move_right(&board);
-		else {
+		} else if (input == 'n') {
+			// Start a new game (or not) based on user input.
+			printf("Start a new game? [y/N] ");
+			input = yoink(raw);
+			if (input == 'y' || input == 'Y') {
+				board_reset(&board);
+			}
+			continue;
+		} else {
 			valid = 0;
 		}
 
@@ -170,10 +186,20 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Print the final board.
-	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
+	printf("\nGame over, you %s!\n", (status < 0) ? "LOSE" : "WIN");
+
+	// Check for new game.
+	do {
+		printf("\nPlay again? [y/n]");
+	} while ((input = yoink(raw)) != 'y' && input != 'Y' &&
+		 input != 'n' && input != 'N');
+	if (input == 'y' || input == 'Y') {
+		board_reset(&board);
+		goto play;
+	}
+
+	// Restore the terminal.
 	if (raw) {
-		printf("Press space to exit.\n");
-		while (getchar() != ' ') { /* wait */ }
 		restore_mode();
 		leave_alternate_buffer();
 	}

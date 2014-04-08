@@ -76,19 +76,12 @@ unsigned board_get_tiles_empty(struct board* board) {
 }
 
 void board_init(struct board* board) {
-	int i;
-	int j;
-
 	// Initialize the score_current.
 	board->score_current = 0;
 	board->score_top = 0;
 
-	// Initialize each tile.
-	for (i = 0; i < BOARD_ROWS; i++) {
-		for (j = 0; j < BOARD_COLUMNS; j++) {
-			board->tiles[i][j] = 0;
-		}
-	}
+	// Initialize the tiles.
+	board_tiles_clear(board);
 
 	// Add two tiles to the board.
 	board_plop(board);
@@ -321,6 +314,18 @@ void board_print(struct board* board) {
 	}
 }
 
+void board_reset(struct board* board) {
+	// Clear the current score.
+	board->score_current = 0;
+
+	// Clear the tiles.
+	board_tiles_clear(board);
+
+	// Place new starting tiles.
+	board_plop(board);
+	board_plop(board);
+}
+
 int board_shift_up(struct board* board) {
 	int i;
 	int j;
@@ -435,6 +440,18 @@ int board_shift_right(struct board* board) {
 
 	// Return move status.
 	return valid;
+}
+
+void board_tiles_clear(struct board* board) {
+	int i;
+	int j;
+
+	// Clear the tiles.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		for (j = 0; j < BOARD_COLUMNS; j++) {
+			board->tiles[i][j] = 0;
+		}
+	}
 }
 
 void board_tiles_merge(struct board* board, unsigned* a, unsigned* b) {

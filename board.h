@@ -114,6 +114,11 @@ void board_plop(struct board* board);
 void board_print(struct board* board);
 
 /**
+ * Start a new game.
+ */
+void board_reset(struct board* board);
+
+/**
  * Shift all the elements in the board down.
  */
 int board_shift_down(struct board* board);
@@ -132,6 +137,11 @@ int board_shift_right(struct board* board);
  * Shift all the elements in the board up.
  */
 int board_shift_up(struct board* board);
+
+/**
+ * Sets the values of all tiles on the specified board to '0'.
+ */
+void board_tiles_clear(struct board* board);
 
 /**
  * Merges the specified tile 'b' into the specified tile 'a' and updates the
