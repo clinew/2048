@@ -32,7 +32,7 @@
 
 #define VERSION "1.0.0"
 
-char* legal_shenanigans =
+char* legal =
 	"2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
 	"This program comes with ABSOLUTELY NO WARRANTY. This is\n"
 	"free software, and you are welcome to redistribute it\n"
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
 		valid = 0;
 	}
 	if (arguments.flags & ARGUMENTS_LEGAL) {
-		printf("%s\n", legal_shenanigans);
+		printf("%s\n", legal);
 		valid = 0;
 	}
 	if (arguments.flags & ARGUMENTS_HELP) {
@@ -118,48 +118,30 @@ int main(int argc, char* argv[]) {
 		srand(time(NULL));
 	}
 
-	if (!raw) {
-		// Print legal shenanigans.
-		fputs(legal_shenanigans, stdout);
-		fputs("\n\n", stdout);
-	}
-
 	// Set up board.
 	board_init(&board);
+	if (!raw) {
+		fputs(legal, stdout);
+	}
 
 	// Play the game.
+	valid = 1;
 	while (!(status = board_done(&board))) {
-		// Print legal shenanigains.
-		if (raw) {
-			fputs("\33[2J", stdout); // clear display
-			fputs("\33[H", stdout); // put cursor at 0,0
-			printf("\t2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
-			       "\tThis program comes with ABSOLUTELY NO WARRANTY. This is\n"
-			       "\tfree software, and you are welcome to redistribute it\n"
-			       "\tunder certain conditions. See the file 'COPYING' in the\n"
-			       "\tsource code for details.\n\n");
-		}
+		// Set up screen for next move.
 		if (raw) {
 			// Clear display and put cursor at 0,0.
-			fputs("\33[2J\33[H", stdout);
+			printf("\33[2J\33[H");
 
 			// Print legal shenanigans.
-			fputs(legal_shenanigans, stdout);
-		} else {
-			fputc('\n', stdout);
+			fputs(legal, stdout);
 		}
-
-		// Print the board.
+		printf("\n");
 		board_print(&board);
-
-		if (!raw) {
-			fputs("> ", stdout);
-		}
-
+		printf("%s", valid ? (raw ? "\n\n" : "") : "\nInvalid move.\n");
+		printf("> ");
 		fflush(stdout);
 
 		// Get the player's move.
-		valid = 0;
 		if (raw) {
 			input = getchar();
 		} else {
@@ -168,6 +150,7 @@ int main(int argc, char* argv[]) {
 			input = raw_input[0];
 		}
 
+		// Process player's move.
 		if (input == 'w' || input == 'k')
 			valid = board_move_up(&board);
 		else if (input == 's' || input == 'j')
@@ -176,20 +159,20 @@ int main(int argc, char* argv[]) {
 			valid = board_move_left(&board);
 		else if (input == 'd' || input == 'l')
 			valid = board_move_right(&board);
-		else
+		else {
 			valid = 0;
+		}
 
+		// End player's move.
 		if (valid) {
 			board_plop(&board);
-		} else {
-			printf("Invalid move.\n");
 		}
 	}
 
 	// Print the final board.
 	printf("\nGame over, you %s!\n\n", (status < 0) ? "LOSE" : "WIN");
 	if (raw) {
-		fputs("Press space to exit.\n", stdout);
+		printf("Press space to exit.\n");
 		while (getchar() != ' ') { /* wait */ }
 		restore_mode();
 		leave_alternate_buffer();
