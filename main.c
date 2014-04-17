@@ -50,13 +50,16 @@ void usage_print(char* message) {
 	
 	// Print the generic usage message.
 	fprintf(stderr, "\nUSAGE: 2048 [OPTIONS...]\n");
-	fprintf(stderr, "      --help     Display this help text.\n");
-	fprintf(stderr, "      --legal    Display legal information.\n");
-	fprintf(stderr, "  -m, --mode     Select output mode.\n");
-	fprintf(stderr, "  -s, --seed     Use specified seed for pseudo-random "
+	fprintf(stderr, "      --help             Display this help text.\n");
+	fprintf(stderr, "      --legal            Display legal information.\n");
+	fprintf(stderr, "  -m, --mode <mode>      Select output mode.\n");
+	fprintf(stderr, "  -s, --seed <unsigned>  Use specified seed for pseudo-random "
 			"number generation.\n");
-	fprintf(stderr, "      --version  Output version information and "
-			"exit.\n");
+	fprintf(stderr, "      --version          Output version information and "
+			"exit.\n\n");
+	fprintf(stderr, "<mode> is one of:\n");
+	fprintf(stderr, "\tformat - Dynamic input and pretty output.\n");
+	fprintf(stderr, "\tplain - Line-by-line input and just dump output.\n");
 	
 	// Exit failure.
 	if (message) {
