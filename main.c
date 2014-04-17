@@ -43,23 +43,25 @@ char* legal =
  * Print the usage message and exit failure.
  */
 void usage_print(char* message) {
+	FILE* out;
 	// Print a specific error message.
 	if (message) {
 		fprintf(stderr, "ERROR: %s.\n", message);
 	}
 	
 	// Print the generic usage message.
-	fprintf(stderr, "\nUSAGE: 2048 [OPTIONS...]\n");
-	fprintf(stderr, "      --help             Display this help text.\n");
-	fprintf(stderr, "      --legal            Display legal information.\n");
-	fprintf(stderr, "  -m, --mode <mode>      Select output mode.\n");
-	fprintf(stderr, "  -s, --seed <unsigned>  Use specified seed for pseudo-random "
+	out = message ? stderr : stdout;
+	fprintf(out, "\nUSAGE: 2048 [OPTIONS...]\n");
+	fprintf(out, "      --help             Display this help text.\n");
+	fprintf(out, "      --legal            Display legal information.\n");
+	fprintf(out, "  -m, --mode <mode>      Select output mode.\n");
+	fprintf(out, "  -s, --seed <unsigned>  Use specified seed for pseudo-random "
 			"number generation.\n");
-	fprintf(stderr, "      --version          Output version information and "
+	fprintf(out, "      --version          Output version information and "
 			"exit.\n\n");
-	fprintf(stderr, "<mode> is one of:\n");
-	fprintf(stderr, "\tformat - Dynamic input and pretty output.\n");
-	fprintf(stderr, "\tplain - Line-by-line input and just dump output.\n");
+	fprintf(out, "<mode> is one of:\n");
+	fprintf(out, "\tformat - Dynamic input and pretty output.\n");
+	fprintf(out, "\tplain - Line-by-line input and just dump output.\n");
 	
 	// Exit failure.
 	if (message) {
