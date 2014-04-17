@@ -6,8 +6,8 @@
  * Specifies how to write board output.
  */
 enum mode {
-	mode_raw,
-	mode_tty
+	mode_format,
+	mode_plain
 };
 
 #endif // mode_H

@@ -11,9 +11,9 @@
 
 
 /**
- * Puts the terminal into some kind of raw mode.
+ * Puts the terminal into some kind of formatting mode.
  */
-void enter_raw_mode(struct termios* term_settings);
+void enter_format_mode(struct termios* term_settings);
 
 /**
  * Restores the original terminal mode.

@@ -68,8 +68,8 @@ void usage_print(char* message) {
 /**
  * Get input from the user.
  */
-char yoink(int raw) {
-	if (raw) {
+char yoink(int format) {
+	if (format) {
 		return getchar();
 	} else {
 		char message[256];
@@ -81,9 +81,9 @@ char yoink(int raw) {
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
+	int format;
 	char input;
 	char* message;
-	int raw;
 	int status; // Game status.
 	struct termios term_settings;
 	int valid;
@@ -111,19 +111,19 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_SUCCESS);
 	}
 	if (arguments.flags & ARGUMENTS_MODE) {
-		if (arguments.mode == mode_tty) {
+		if (arguments.mode == mode_format) {
 			setup_signal_handlers();
 			enter_alternate_buffer();
-			enter_raw_mode(&term_settings);
-			raw = 1;
-		} else if (arguments.mode == mode_raw) {
-			raw = 0;
+			enter_format_mode(&term_settings);
+			format = 1;
+		} else if (arguments.mode == mode_plain) {
+			format = 0;
 		}
 	} else if (isatty(STDOUT_FILENO) && isatty(STDIN_FILENO)) {
 		setup_signal_handlers();
 		enter_alternate_buffer();
-		enter_raw_mode(&term_settings);
-		raw = 1;
+		enter_format_mode(&term_settings);
+		format = 1;
 	}
 	if (arguments.flags & ARGUMENTS_SEED) {
 		srand(arguments.seed);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
 
 	// Set up the board.
 	board_init(&board);
-	if (!raw) {
+	if (!format) {
 		fputs(legal, stdout);
 	}
 
@@ -142,7 +142,7 @@ play:
 	valid = 1;
 	while (!(status = board_done(&board))) {
 		// Set up screen for next move.
-		if (raw) {
+		if (format) {
 			// Clear display and put cursor at 0,0.
 			printf("\33[2J\33[H");
 
@@ -151,12 +151,12 @@ play:
 		}
 		printf("\n");
 		board_print(&board);
-		printf("%s", valid ? (raw ? "\n\n" : "") : "\nInvalid move.\n");
+		printf("%s", valid ? (format ? "\n\n" : "") : "\nInvalid move.\n");
 		printf("> ");
 		fflush(stdout);
 
 		// Get the player's move.
-		input = yoink(raw);
+		input = yoink(format);
 
 		// Process player's move.
 		if (input == 'w' || input == 'k') {
@@ -170,7 +170,7 @@ play:
 		} else if (input == 'n') {
 			// Start a new game (or not) based on user input.
 			printf("Start a new game? [y/N] ");
-			input = yoink(raw);
+			input = yoink(format);
 			if (input == 'y' || input == 'Y') {
 				board_reset(&board);
 			}
@@ -191,7 +191,7 @@ play:
 	// Check for new game.
 	do {
 		printf("\nPlay again? [y/n]");
-	} while ((input = yoink(raw)) != 'y' && input != 'Y' &&
+	} while ((input = yoink(format)) != 'y' && input != 'Y' &&
 		 input != 'n' && input != 'N');
 	if (input == 'y' || input == 'Y') {
 		board_reset(&board);
@@ -199,7 +199,7 @@ play:
 	}
 
 	// Restore the terminal.
-	if (raw) {
+	if (format) {
 		restore_mode();
 		leave_alternate_buffer();
 	}

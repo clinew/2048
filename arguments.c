@@ -29,10 +29,10 @@ char* arguments_parse(struct arguments* arguments, int argc, char* argv[]) {
 			if (++i >= argc) {
 				return "Mode declared but not defined";
 			}
-			if (!strcmp(argv[i], "raw")) {
-				arguments->mode = mode_raw;
-			} else if (!strcmp(argv[i], "tty")) {
-				arguments->mode = mode_tty;
+			if (!strcmp(argv[i], "plain")) {
+				arguments->mode = mode_plain;
+			} else if (!strcmp(argv[i], "format")) {
+				arguments->mode = mode_format;
 			} else {
 				return "Mode not recognized";
 			}

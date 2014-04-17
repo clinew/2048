@@ -33,7 +33,7 @@ void leave_alternate_buffer() {
 	fputs("\33[?1049l", stdout);
 }
 
-void enter_raw_mode(struct termios* term_settings) {
+void enter_format_mode(struct termios* term_settings) {
 	if (!isatty(STDOUT_FILENO)) {
 		fputs("Output is not a tty. Dying.\n", stderr);
 		exit(1);
