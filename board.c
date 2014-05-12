@@ -23,13 +23,20 @@ int board_done(struct board* board) {
 	int j;
 	int k;
 
-	// Check for zeroes or winning number.
+	// Check for winning number.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		for (j = 0; j < BOARD_COLUMNS; j++) {
+			if (board->tiles[i][j] == 2048) {
+				return 1;
+			}
+		}
+	}
+
+	// Check for zeroes
 	for (i = 0; i < BOARD_ROWS; i++) {
 		for (j = 0; j < BOARD_COLUMNS; j++) {
 			if (!board->tiles[i][j]) {
 				return 0;
-			} else if (board->tiles[i][j] == 2048) {
-				return 1;
 			}
 		}
 	}
