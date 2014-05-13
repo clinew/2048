@@ -23,13 +23,20 @@ int board_done(struct board* board) {
 	int j;
 	int k;
 
-	// Check for zeroes or winning number.
+	// Check for winning number.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		for (j = 0; j < BOARD_COLUMNS; j++) {
+			if (board->tiles[i][j] == 2048) {
+				return 1;
+			}
+		}
+	}
+
+	// Check for zeroes
 	for (i = 0; i < BOARD_ROWS; i++) {
 		for (j = 0; j < BOARD_COLUMNS; j++) {
 			if (!board->tiles[i][j]) {
 				return 0;
-			} else if (board->tiles[i][j] == 2048) {
-				return 1;
 			}
 		}
 	}
@@ -53,7 +60,7 @@ int board_done(struct board* board) {
 			}
 		}
 	}
-	
+
 	// No possible merges.
 	return -1;
 }
@@ -76,15 +83,12 @@ unsigned board_get_tiles_empty(struct board* board) {
 }
 
 void board_init(struct board* board) {
-	int i;
-	int j;
+	// Initialize the score_current.
+	board->score_current = 0;
+	board->score_top = 0;
 
-	// Initialize each tile.
-	for (i = 0; i < BOARD_ROWS; i++) {
-		for (j = 0; j < BOARD_COLUMNS; j++) {
-			board->tiles[i][j] = 0;
-		}
-	}
+	// Initialize the tiles.
+	board_tiles_clear(board);
 
 	// Add two tiles to the board.
 	board_plop(board);
@@ -116,8 +120,9 @@ int board_merge_down(struct board* board) {
 
 			// Try to merge the tiles.
 			if (board->tiles[j][i] == board->tiles[k][i]) {
-				board->tiles[k][i] += board->tiles[k][i];
-				board->tiles[j][i] = 0;
+				board_tiles_merge(board,
+						  &board->tiles[k][i],
+						  &board->tiles[j][i]);
 				j = k - 1;
 				merge = 1;
 			} else {
@@ -156,8 +161,9 @@ int board_merge_left(struct board* board) {
 
 			// Try to merge the tiles.
 			if (board->tiles[i][j] == board->tiles[i][k]) {
-				board->tiles[i][j] += board->tiles[i][j];
-				board->tiles[i][k] = 0;
+				board_tiles_merge(board,
+						  &board->tiles[i][j],
+						  &board->tiles[i][k]);
 				j = k + 1;
 				merge = 1;
 			} else {
@@ -195,8 +201,9 @@ int board_merge_right(struct board* board) {
 
 			// Try to merge the tiles.
 			if (board->tiles[i][j] == board->tiles[i][k]) {
-				board->tiles[i][k] += board->tiles[i][k];
-				board->tiles[i][j] = 0;
+				board_tiles_merge(board,
+						  &board->tiles[i][k],
+						  &board->tiles[i][j]);
 				j = k - 1;
 				merge = 1;
 			} else {
@@ -234,8 +241,9 @@ int board_merge_up(struct board* board) {
 
 			// Try to merge the tiles.
 			if (board->tiles[j][i] == board->tiles[k][i]) {
-				board->tiles[j][i] += board->tiles[j][i];
-				board->tiles[k][i] = 0;
+				board_tiles_merge(board,
+						  &board->tiles[j][i],
+						  &board->tiles[k][i]);
 				j = k + 1;
 				merge = 1;
 			} else {
@@ -278,14 +286,14 @@ void board_plop(struct board* board) {
 	tiles_empty = board_get_tiles_empty(board);
 
 	// Choose a random tile to palce the value into.
-	target = random() % tiles_empty;
+	target = rand() % tiles_empty;
 
 	// Place the value into the tile. Implemented poorly.
 	tiles_empty = 0;
 	for (i = 0; i < BOARD_ROWS; i++) {
 		for (j = 0; j < BOARD_COLUMNS; j++) {
 			if (target == tiles_empty && board->tiles[i][j] == 0) {
-				board->tiles[i][j] = (random() % 100 <=
+				board->tiles[i][j] = (rand() % 100 <=
 						BOARD_4SPAWN_CHANCE) ? 4 : 2;
 				tiles_empty++;
 			} else if (board->tiles[i][j] == 0) {
@@ -299,7 +307,11 @@ void board_print(struct board* board) {
 	int i;
 	int j;
 
-	// Print the board to 'stdout'.
+	// Print the board's score.
+	printf("          Top: %5u\n      Current: %5u\n\n", board->score_top,
+	       board->score_current);
+
+	// Print the board's tiles.
 	for (i = 0; i < BOARD_ROWS; i++) {
 		printf(" ");
 		for (j = 0; j < BOARD_COLUMNS; j++) {
@@ -311,6 +323,18 @@ void board_print(struct board* board) {
 		}
 		printf("\n");
 	}
+}
+
+void board_reset(struct board* board) {
+	// Clear the current score.
+	board->score_current = 0;
+
+	// Clear the tiles.
+	board_tiles_clear(board);
+
+	// Place new starting tiles.
+	board_plop(board);
+	board_plop(board);
 }
 
 int board_shift_up(struct board* board) {
@@ -345,7 +369,7 @@ int board_shift_up(struct board* board) {
 int board_shift_down(struct board* board) {
 	int i;
 	int j;
-	unsigned k;
+	int k;
 	int valid;
 
 	// Shift tiles down the columns.
@@ -403,7 +427,7 @@ int board_shift_left(struct board* board) {
 int board_shift_right(struct board* board) {
 	int i;
 	int j;
-	unsigned k;
+	int k;
 	int valid;
 
 	// Shift tiles right across the rows.
@@ -427,4 +451,25 @@ int board_shift_right(struct board* board) {
 
 	// Return move status.
 	return valid;
+}
+
+void board_tiles_clear(struct board* board) {
+	int i;
+	int j;
+
+	// Clear the tiles.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		for (j = 0; j < BOARD_COLUMNS; j++) {
+			board->tiles[i][j] = 0;
+		}
+	}
+}
+
+void board_tiles_merge(struct board* board, unsigned* a, unsigned* b) {
+	// Merge the two specified tiles.
+	board->score_current += (*a) += (*a);
+	if (board->score_current > board->score_top) {
+		board->score_top = board->score_current;
+	}
+	(*b) = 0;
 }

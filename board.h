@@ -20,6 +20,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 
 
 #define BOARD_COLUMNS 4
@@ -34,6 +35,10 @@
  * Represents the in-game board.
  */
 struct board {
+	// Total score for the current game.
+	unsigned score_current;
+	// Top score.
+	unsigned score_top;
 	// Holds the value of each tile.
 	unsigned tiles[BOARD_ROWS][BOARD_COLUMNS];
 };
@@ -109,6 +114,11 @@ void board_plop(struct board* board);
 void board_print(struct board* board);
 
 /**
+ * Start a new game.
+ */
+void board_reset(struct board* board);
+
+/**
  * Shift all the elements in the board down.
  */
 int board_shift_down(struct board* board);
@@ -127,6 +137,17 @@ int board_shift_right(struct board* board);
  * Shift all the elements in the board up.
  */
 int board_shift_up(struct board* board);
+
+/**
+ * Sets the values of all tiles on the specified board to '0'.
+ */
+void board_tiles_clear(struct board* board);
+
+/**
+ * Merges the specified tile 'b' into the specified tile 'a' and updates the
+ * total score.
+ */
+void board_tiles_merge(struct board* board, unsigned* a, unsigned* b);
 
 
 #endif // board_H
