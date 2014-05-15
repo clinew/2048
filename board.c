@@ -23,13 +23,20 @@ int board_done(struct board* board) {
 	int j;
 	int k;
 
-	// Check for zeroes or winning number.
+	// Check for winning number.
+	for (i = 0; i < BOARD_ROWS; i++) {
+		for (j = 0; j < BOARD_COLUMNS; j++) {
+			if (board->tiles[i][j] == 2048) {
+				return 1;
+			}
+		}
+	}
+
+	// Check for zeroes
 	for (i = 0; i < BOARD_ROWS; i++) {
 		for (j = 0; j < BOARD_COLUMNS; j++) {
 			if (!board->tiles[i][j]) {
 				return 0;
-			} else if (board->tiles[i][j] == 2048) {
-				return 1;
 			}
 		}
 	}
@@ -250,19 +257,23 @@ int board_merge_up(struct board* board) {
 }
 
 int board_move_down(struct board* board) {
-	return board_merge_down(board) | board_shift_down(board);
+	char a = board_merge_down(board);
+	return a | board_shift_down(board);
 }
 
 int board_move_left(struct board* board) {
-	return board_merge_left(board) | board_shift_left(board);
+	char a = board_merge_left(board);
+	return a | board_shift_left(board);
 }
 
 int board_move_right(struct board* board) {
-	return board_merge_right(board) | board_shift_right(board);
+	char a = board_merge_right(board);
+	return a | board_shift_right(board);
 }
 
 int board_move_up(struct board* board) {
-	return board_merge_up(board) | board_shift_up(board);
+	char a = board_merge_up(board);
+	return a | board_shift_up(board);
 }
 
 void board_plop(struct board* board) {
