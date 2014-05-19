@@ -40,6 +40,21 @@ char* legal =
 	"source code for details.\n";
 
 /**
+ * Print help message.
+ */
+void help_print() {
+	printf("\nMovement Keys:\n");
+	printf("  [wk]    Move tiles up.\n");
+	printf("  [sj]    Move tiles down.\n");
+	printf("  [ah]    Move tiles left.\n");
+	printf("  [dl]    Move tiles right.\n");
+	printf("\nGame Control:\n");
+	printf("  Ctrl+C  Quit game (SIGNINT).\n");
+	printf("  n       Start new game.\n");
+	printf("  ?       Display this help text.\n");
+}
+
+/**
  * Print the usage message and exit failure.
  */
 void usage_print(char* message) {
@@ -178,6 +193,13 @@ play:
 			input = yoink(format);
 			if (input == 'y' || input == 'Y') {
 				board_reset(&board);
+			}
+			continue;
+		} else if (input == '?') {
+			help_print();
+			if (format) {
+				printf("\nPress any key to continue.");
+				input = yoink(format);
 			}
 			continue;
 		} else {
