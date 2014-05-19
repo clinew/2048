@@ -1,7 +1,7 @@
 #ifndef io_H
 #define io_H
 
-#define _POSIX_C_SOURCE 200112L
+#include "include.h"
 
 #include <signal.h>
 #include <stdio.h>

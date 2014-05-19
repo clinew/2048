@@ -65,6 +65,11 @@ int board_done(struct board* board) {
 	return -1;
 }
 
+void board_free(struct board* board) {
+	// Close the score file.
+	close(board->score_file);
+}
+
 unsigned board_get_tiles_empty(struct board* board) {
 	int i;
 	int j;
@@ -83,9 +88,9 @@ unsigned board_get_tiles_empty(struct board* board) {
 }
 
 void board_init(struct board* board) {
-	// Initialize the score_current.
+	// Initialize the scores.
 	board->score_current = 0;
-	board->score_top = 0;
+	board_init_score(board);
 
 	// Initialize the tiles.
 	board_tiles_clear(board);
@@ -93,6 +98,72 @@ void board_init(struct board* board) {
 	// Add two tiles to the board.
 	board_plop(board);
 	board_plop(board);
+}
+
+void board_init_score(struct board* board) {
+	char directory_path[128];
+	char file_path[128];
+	char* home;
+
+	// Get filepaths.
+	if (!(home = getenv("HOME"))) {
+		fprintf(stderr, "Unable to get home directory.");
+		goto out;
+	}
+	strncpy(directory_path, home, sizeof(directory_path));
+	if (strlen(directory_path) + strlen("/.2048") + 1 > 128) {
+		fprintf(stderr, "Directory path too long.");
+		goto out;
+	}
+	strncat(directory_path, "/.2048", strlen("/.2048"));
+	strncpy(file_path, home, sizeof(file_path));
+	if (strlen(file_path) + strlen("/.2048/score_top") + 1 > 128) {
+		fprintf(stderr, "File path too long.");
+		goto out;
+	}
+	strncat(file_path, "/.2048/score_top", sizeof("/.2048/score_top"));
+
+	// Open the top scores file.
+	if ((board->score_file = open(file_path, O_RDWR)) == -1) {
+		int directory;
+
+		// Create program directory.
+		if ((directory = open(directory_path, O_DIRECTORY | O_RDONLY))
+								== -1) {
+			if (mkdir(directory_path, 0755) == -1) {
+				perror("Unable to create save path.");
+				goto out;
+			}
+		} else {
+			close(directory);
+		}
+
+		// Create top scores file.
+		if ((board->score_file = open(file_path, O_CREAT | O_RDWR,
+							0644)) == -1) {
+			perror("Unable to create save file.");
+			goto out;
+		}
+
+		// Set initial score.
+		board->score_top = 0;
+	} else {
+		// Read in top score.
+		if (read(board->score_file, &board->score_top,
+				sizeof(board->score_top)) == -1 ) {
+			perror("Unable to read in top score.");
+			goto out;
+		}
+	}
+
+	// Return safely.
+	return;
+
+out:
+	// Score file neither found nor loaded.
+	board->score_top = 0;
+	board->score_file = 0;
+	return;
 }
 
 int board_merge_down(struct board* board) {
@@ -337,6 +408,32 @@ void board_reset(struct board* board) {
 	board_plop(board);
 }
 
+void board_score_updated(struct board* board) {
+	// Check for new top score.
+	if (board->score_current <= board->score_top) {
+		// Nothing to do.
+		return;
+	}
+
+	// Update in-game score.
+	board->score_top = board->score_current;
+
+	// Update score file.
+	if (!board->score_file) {
+		// Nothing to do.
+		return;
+	}
+	if (lseek(board->score_file, 0, SEEK_SET) == -1) {
+		fprintf(stderr, "Error updating score file: %i", errno);
+		return;
+	}
+	if (write(board->score_file, &board->score_top,
+			sizeof(board->score_top)) == -1) {
+		fprintf(stderr, "Error writing to score file: %i", errno);
+		return;
+	}
+}
+
 int board_shift_up(struct board* board) {
 	int i;
 	int j;
@@ -468,8 +565,8 @@ void board_tiles_clear(struct board* board) {
 void board_tiles_merge(struct board* board, unsigned* a, unsigned* b) {
 	// Merge the two specified tiles.
 	board->score_current += (*a) += (*a);
-	if (board->score_current > board->score_top) {
-		board->score_top = board->score_current;
-	}
 	(*b) = 0;
+
+	// Propogate updated score.
+	board_score_updated(board);
 }

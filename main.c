@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _POSIX_C_SOURCE 200112L
+#include "include.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -230,6 +230,9 @@ play:
 		restore_mode();
 		leave_alternate_buffer();
 	}
+
+	// Free the board.
+	board_free(&board);
 
 	// Return success.
 	return EXIT_SUCCESS;

@@ -18,9 +18,16 @@
 #ifndef board_H
 #define board_H
 
+#include "include.h"
 
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 #define BOARD_COLUMNS 4
@@ -37,6 +44,8 @@
 struct board {
 	// Total score for the current game.
 	unsigned score_current;
+	// File handle for the top score.
+	int score_file;
 	// Top score.
 	unsigned score_top;
 	// Holds the value of each tile.
@@ -51,6 +60,11 @@ struct board {
 int board_done(struct board* board);
 
 /**
+ * Clean up any resources associated with the speicifed board.
+ */
+void board_free(struct board* board);
+
+/**
  * Returns the number of empty tiles in the board.
  */
 unsigned board_get_tiles_empty(struct board* board);
@@ -59,6 +73,11 @@ unsigned board_get_tiles_empty(struct board* board);
  * Initializes the specified board.
  */
 void board_init(struct board* board);
+
+/**
+ * Initialize the specified board's top score and score file.
+ */
+void board_init_score(struct board* board);
 
 /**
  * Merge tiles in the board downwards.
@@ -117,6 +136,12 @@ void board_print(struct board* board);
  * Start a new game.
  */
 void board_reset(struct board* board);
+
+/**
+ * Call whenever the current score is updated in order to propogate changes
+ * to the top score and score file.
+ */
+void board_score_updated(struct board* board);
 
 /**
  * Shift all the elements in the board down.
