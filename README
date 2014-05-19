@@ -1,0 +1,6 @@
+2048 is a command-line implementation of the hacker-pop-culture boardgame by
+the same name.
+
+The goal of the game is to combine tiles of the same number until one creates
+the "2048" tile. The entire board may be moved by using either "wasd" (standard
+gaming movement keys) or "hjkl" (vim keys). Use Ctrl+C (SIGINT) to exit.
