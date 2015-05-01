@@ -34,6 +34,10 @@ ${files}: %: %.c
 ${output}: ${objects}
 	${compiler} ${flags} -o ${output} ${objects}
 
+# Install the program.
+install:
+	cp ${output} /usr/local/bin/${output}
+
 # Remove all the output files.
 clean: tidy
 	rm -f ${output}
