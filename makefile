@@ -18,6 +18,7 @@ compiler = gcc
 flags = -Wall -Werror --pedantic-errors --std=c99
 #libraries = -lm
 files = arguments board main io
+manpage = 2048.1
 output = 2048
 headers = ${files:=.h}
 objects = ${files:=.o}
@@ -35,8 +36,10 @@ ${output}: ${objects}
 	${compiler} ${flags} -o ${output} ${objects}
 
 # Install the program.
+# Hmm, is it okay to install directly to /usr/share and not /usr/local/share?
 install:
 	cp ${output} /usr/local/bin/${output}
+	cp ${manpage} /usr/share/man/man1/${manpage}
 
 # Remove all the output files.
 clean: tidy
