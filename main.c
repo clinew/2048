@@ -30,7 +30,7 @@
 #include "io.h"
 
 
-#define VERSION "1.0.0"
+#define VERSION "2.0.0"
 
 char* legal =
 	"2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
