@@ -1,0 +1,67 @@
+.\" Copyright (c) 2015 Wade T. Cline
+.\" All rights reserved
+.\"
+.\" This program is free software: you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.\"
+.\"
+.\" Man page format copied from Gentoo's 'dhcpcd' man page.
+.\"
+.Dd April 30, 2015
+.Dt 2048 1
+.Os
+.Sh NAME
+.Nm 2048
+.Nd The hacker pop-culture board game.
+.Sh SYNOPSIS
+.Nm
+.Op Fl m , Fl Fl mode Ar mode
+.Op Fl s , Fl Fl seed Ar unsigned
+.Nm
+.Fl Fl help
+.Nm
+.Fl Fl legal
+.Nm
+.Fl Fl version
+.Sh DESCRIPTION
+.Nm
+is an implementation of the hacker pop-culture board game
+.Nm
+in which the player attemps to combine tiles with the same power-of-two integer values into the "2048" tile.
+.Ss Gameplay
+Use the standard gaming "wasd" keys or the vim keys "hjkl" to move tiles in the appropriate directions. To start a new game, type "n". To view a help menu in-game, press "?". To quit the game, send SIGINT by typing "Ctrl+C".
+.Ss Command-line Options
+.Bl -tag -width indent
+.It Fl Fl help
+Display usage message and exit.
+.It Fl Fl legal
+Display legal information and exit.
+.It Fl m , Fl Fl mode
+Select output "mode". By default, 2048 uses special terminal character-things to make the game more asthetically pleasing; set to "plain" to disable.
+.It Fl s , Fl Fl seed
+Set the seed for the pseudo-random number generator. By default the seed is taken from the current time.
+.It Fl Fl version
+Display the version and exit.
+.Sh FILES
+.Bl -ohang
+.It Pa ~/.2048/score_top
+Stores the top score achieved by the user.
+.Sh AUTHORS
+.An Wade T. Cline (Frostsnow) Aq Mt wadecline@hotmail.com
+
+With help from:
+.An "drkitty"
+.Lk https://github.com/drkitty
+.Sh BUGS
+Please report bugs to
+.Lk https://github.com/clinew/2048
