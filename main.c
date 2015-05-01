@@ -55,6 +55,26 @@ void help_print() {
 }
 
 /**
+ * Print the game screen to 'stdout'.
+ */
+void screen_print(struct board* board, char* message, int format) {
+	if (format) {
+		// Clear display and put cursor at 0,0.
+		printf("\33[2J\33[H");
+
+		// Print legal shenanigans.
+		fputs(legal, stdout);
+	}
+	printf("\n");
+	board_print(board);
+	if (message) {
+		printf("%s", message);
+	}
+	printf("> ");
+	fflush(stdout);
+}
+
+/**
  * Print the usage message and exit failure.
  */
 void usage_print(char* message) {
@@ -101,6 +121,7 @@ char yoink(int format) {
 int main(int argc, char* argv[]) {
 	struct arguments arguments;
 	struct board board;
+	char buffer[256];
 	int format;
 	char input;
 	char* message;
@@ -162,18 +183,9 @@ play:
 	valid = 1;
 	while (!(status = board_done(&board))) {
 		// Set up screen for next move.
-		if (format) {
-			// Clear display and put cursor at 0,0.
-			printf("\33[2J\33[H");
-
-			// Print legal shenanigans.
-			fputs(legal, stdout);
-		}
-		printf("\n");
-		board_print(&board);
-		printf("%s", valid ? (format ? "\n\n" : "") : "\nInvalid move.\n");
-		printf("> ");
-		fflush(stdout);
+		// Sorry about this ugly call.
+		screen_print(&board, valid ? (format ? "\n\n" : "") :
+			"\nInvalid move.\n", format);
 
 		// Get the player's move.
 		input = yoink(format);
@@ -213,13 +225,16 @@ play:
 	}
 
 	// Print the final board.
-	printf("\nGame over, you %s!\n", (status < 0) ? "LOSE" : "WIN");
+	snprintf(buffer, sizeof(buffer),
+		"\nGame over, you %s!\n\nPlay again? [y/n]\n",
+		(status < 0) ? "LOSE" : "WIN");
+	screen_print(&board, buffer, format);
 
 	// Check for new game.
-	do {
-		printf("\nPlay again? [y/n]");
-	} while ((input = yoink(format)) != 'y' && input != 'Y' &&
-		 input != 'n' && input != 'N');
+	while ((input = yoink(format)) != 'y' && input != 'Y' &&
+		 input != 'n' && input != 'N') {
+		 screen_print(&board, buffer, format);
+	}
 	if (input == 'y' || input == 'Y') {
 		board_reset(&board);
 		goto play;
