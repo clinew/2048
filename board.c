@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 by Wade T. Cline (Frostsnow)
+ *  Copyright 2014-2015, 2024 by Wade T. Cline (Frostsnow)
  *
  *  "2048" is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -115,13 +115,13 @@ void board_init_score(struct board* board) {
 		fprintf(stderr, "Directory path too long.");
 		goto out;
 	}
-	strncat(directory_path, "/.2048", strlen("/.2048"));
+	strncat(directory_path, "/.2048", sizeof(directory_path) - 1);
 	strncpy(file_path, home, sizeof(file_path));
 	if (strlen(file_path) + strlen("/.2048/score_top") + 1 > 128) {
 		fprintf(stderr, "File path too long.");
 		goto out;
 	}
-	strncat(file_path, "/.2048/score_top", sizeof("/.2048/score_top"));
+	strncat(file_path, "/.2048/score_top", sizeof(file_path) - 1);
 
 	// Open the top scores file.
 	if ((board->score_file = open(file_path, O_RDWR)) == -1) {

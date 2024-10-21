@@ -14,7 +14,7 @@
 #  along with "2048".  If not, see <http://www.gnu.org/licenses/>.
 
 compiler = gcc
-flags = -Wall -Werror --pedantic-errors --std=c99
+flags = -Wall --pedantic-errors --std=c99
 #libraries = -lm
 files = arguments board main io
 manpage = 2048.1

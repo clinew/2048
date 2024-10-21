@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 by Wade T. Cline (Frostsnow)
+ *  Copyright 2014-2015, 2024 by Wade T. Cline (Frostsnow)
  *
  *  "2048" is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 #include "io.h"
 
 
-#define VERSION "2.0.0"
+#define VERSION "2.0.1"
 
 char* legal =
-	"2048 (implemented in C)  Copyright (C) 2014  Wade T. Cline\n"
+	"2048 (implemented in C)  Copyright (C) 2014-2015, 2024 Wade T. Cline\n"
 	"This program comes with ABSOLUTELY NO WARRANTY. This is\n"
 	"free software, and you are welcome to redistribute it\n"
 	"under certain conditions. See the file 'COPYING' in the\n"
